@@ -1,0 +1,27 @@
+{
+    "file_info": {
+        "input_name": "low_rel.mp4",
+        "input_resolution": "640x360",
+        "output_resolution": "0x0",
+        "total_frames": 253,
+        "fps": 25,
+        "duration": 10.12
+    },
+    "model_config": {
+        "name": "RealESRGAN_x4plus",
+        "scale_factor": 4,
+        "tile_size": 0,
+        "face_enhance": false,
+        "half_precision": true
+    },
+    "performance": {
+        "total_processing_time": 159.9858853816986,
+        "inference_time": 159.96050572395325,
+        "fps_achieved": 1.5816404108937159,
+        "gpu_peak_memory_mb": 2973.0,
+        "gpu_avg_utilization": 66.45394736842105,
+        "cpu_avg_utilization": 16.460526315789476,
+        "ram_peak_usage_percent": 12.9
+    },
+    "timestamp": "2024-11-25T13:21:21.890972"
+}

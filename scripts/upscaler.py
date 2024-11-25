@@ -1,289 +1,206 @@
-"""
-Video Upscaling System using Real-ESRGAN and Related Models
-
-This module provides a production-grade video upscaling system that utilizes
-Real-ESRGAN models for high-quality video enhancement. It supports multiple
-models and configurations with comprehensive error handling and logging.
-
-Typical usage example:
-    settings = UpscalerSettings()
-    upscaler = VideoUpscaler(settings)
-    output_path = upscaler.upscale()
-
-Dependencies:
-    - Real-ESRGAN
-    - PyTorch
-    - OpenCV
-    - CUDA Toolkit
-"""
-
-from pathlib import Path
-from typing import Literal, Optional, Dict, Any
-from pydantic_settings import BaseSettings
-from pydantic import Field
-import torch
-import cv2
 import os
+import sys
+import json
+import time
+from pathlib import Path
+from typing import Dict, List, Optional, Union, Any
+from datetime import datetime
+import cv2
+import torch
 import subprocess
-import shutil
-import git
-from PIL import Image
 from tqdm import tqdm
 from loguru import logger
+from pydantic_settings import BaseSettings
+from pydantic import Field
+import git
 from configs.upscaler_settings import UpscalerSettings
-import psutil
-import time
-import GPUtil
-import sys
+
+"""
+Features:
+    - Batch video processing with progress tracking
+    - Detailed performance metrics collection
+    - Automated environment setup
+    - Error handling and recovery
+    - JSON-based metrics export
+
+Dependencies:
+    - torch with CUDA support
+    - Real-ESRGAN
+    - OpenCV
+    - loguru for logging
+    - tqdm for progress tracking
+
+Typical usage:
+    settings = UpscalerSettings(input_dir=Path("videos"), model_name="RealESRGAN_x4plus")
+    upscaler = VideoUpscaler(settings)
+    metrics = upscaler.process_batch()
+"""
 
 
-class ResourceMonitor:
-    """Monitor system resources during video processing operations.
+class BatchMetrics:
+    """
+    Tracks and manages performance metrics for batch video processing operations.
 
-    This class provides real-time monitoring of GPU, CPU, and memory usage during
-    video processing tasks. It tracks resource utilization metrics and processing time
-    for performance analysis and optimization.
+    This class handles the collection and aggregation of processing metrics across
+    multiple videos in a batch, providing summary statistics and individual video results.
 
     Attributes:
-        gpu_id (int): The ID of the GPU device to monitor
-        start_time (float | None): Timestamp when monitoring started
-        end_time (float | None): Timestamp when monitoring ended
+        start_time (float): Unix timestamp when batch processing started
+        model_name (str): Name of the upscaling model being used
+        num_videos (int): Total number of videos in the batch
+        videos_processed (List[Dict[str, Union[str, float]]]): List of processed video results
 
     Example:
-        monitor = ResourceMonitor(gpu_id=0)
-        monitor.start()
-        metrics = monitor.get_metrics()
+        metrics = BatchMetrics("RealESRGAN_x4plus", num_videos=5)
+        metrics.add_video_result("video1.mp4", 10.5)
+        summary = metrics.get_summary()
     """
 
-    def __init__(self, gpu_id: int):
-        """Initialize the resource monitor.
+    def __init__(self, model_name: str, num_videos: int) -> None:
+        """
+        Initialize batch metrics tracker.
 
         Args:
-            gpu_id (int): The ID of the GPU device to monitor
+            model_name: Name of the upscaling model being used
+            num_videos: Total number of videos to be processed
         """
-        self.gpu_id = gpu_id
-        self.start_time = None
-        self.end_time = None
+        self.start_time: float = time.time()
+        self.model_name: str = model_name
+        self.num_videos: int = num_videos
+        self.videos_processed: List[Dict[str, Union[str, float]]] = []
 
-    def start(self):
-        """Start monitoring resources."""
-        self.start_time = time.time()
+    def add_video_result(self, video_name: str, inference_time: float) -> None:
+        """
+        Add processing results for a single video.
 
-    def get_metrics(self) -> Dict[str, float]:
-        """Get current system resource usage metrics.
+        Args:
+            video_name: Name of the processed video file
+            inference_time: Time taken to process the video in seconds
+        """
+        self.videos_processed.append({"name": video_name, "inference_time": inference_time})
+
+    def get_summary(self) -> Dict[str, Any]:
+        """
+        Generate comprehensive batch processing summary.
 
         Returns:
-            Dict[str, float]: Dictionary containing the following metrics:
-                - gpu_memory_used: GPU memory usage in MB
-                - gpu_utilization: GPU utilization percentage (0-100)
-                - cpu_percent: CPU utilization percentage (0-100)
-                - ram_percent: RAM utilization percentage (0-100)
-                - time_elapsed: Time elapsed since monitoring started in seconds
+            Dictionary containing:
+                - model_name: Name of the model used
+                - total_videos: Number of videos processed
+                - total_batch_time: Total processing time in seconds
+                - average_time_per_video: Average processing time per video
+                - videos: List of individual video results
+                - timestamp: ISO format timestamp of completion
         """
-        gpu = GPUtil.getGPUs()[self.gpu_id]
+        total_time = time.time() - self.start_time
         return {
-            "gpu_memory_used": gpu.memoryUsed,
-            "gpu_utilization": gpu.load * 100,
-            "cpu_percent": psutil.cpu_percent(),
-            "ram_percent": psutil.virtual_memory().percent,
-            "time_elapsed": time.time() - self.start_time if self.start_time else 0,
+            "model_name": self.model_name,
+            "total_videos": self.num_videos,
+            "total_batch_time": total_time,
+            "average_time_per_video": total_time / self.num_videos,
+            "videos": self.videos_processed,
+            "timestamp": datetime.now().isoformat(),
         }
 
 
 class VideoUpscaler:
-    """Production-grade video upscaling system using Real-ESRGAN.
+    """
+    Production-grade video upscaling system with batch processing capabilities.
 
-    This class implements a comprehensive video upscaling pipeline using the Real-ESRGAN
-    super-resolution model. It handles the complete workflow including environment setup,
-    model management, resource monitoring, and video processing.
-
-    Features:
-        - Automatic environment setup and dependency management
-        - Multiple model support with automatic weight downloading
-        - Resource monitoring and logging
-        - Error handling and recovery
-        - Progress tracking and metrics reporting
+    This class implements a comprehensive video upscaling pipeline using Real-ESRGAN,
+    supporting batch processing with metrics collection and error handling.
 
     Attributes:
         settings (UpscalerSettings): Configuration settings for the upscaler
-        monitor (ResourceMonitor): System resource monitor instance
-        model (Any): Loaded model instance
-        device (torch.device): Processing device (GPU)
         realesrgan_path (Path): Path to Real-ESRGAN installation
 
+    Class Constants:
+        REALESRGAN_REPO (str): URL of the Real-ESRGAN repository
+
     Example:
-        settings = UpscalerSettings()
+        settings = UpscalerSettings(input_dir=Path("videos"))
         upscaler = VideoUpscaler(settings)
-        output_path = upscaler.process_video()
+        metrics = upscaler.process_batch()
     """
 
-    REALESRGAN_REPO = "https://github.com/xinntao/Real-ESRGAN.git"
-    MODEL_URLS = {
-        "RealESRGAN_x4plus": "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.1.0/RealESRGAN_x4plus.pth",
-        "RealESRGAN_x4plus_anime_6B": "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.2.4/RealESRGAN_x4plus_anime_6B.pth",
-        "realesr-animevideov3": "https://github.com/xinntao/Real-ESRGAN/releases/download/v0.2.5.0/realesr-animevideov3.pth",
-    }
+    REALESRGAN_REPO: str = "https://github.com/xinntao/Real-ESRGAN.git"
 
-    def __init__(self, settings: UpscalerSettings):
-        """Initialize the upscaler with settings."""
+    def __init__(self, settings: UpscalerSettings) -> None:
+        """
+        Initialize the upscaler with provided settings.
+
+        Args:
+            settings: Configuration settings for video processing
+
+        Raises:
+            RuntimeError: If CUDA GPU is not available
+        """
         self.settings = settings
-        self.monitor = ResourceMonitor(settings.gpu_device)
-        self._setup_environment()
-        self._setup_logging()
-        self.model = None
-        self.device = self._setup_device()
+        self.realesrgan_path = self._setup_environment()
+        logger.info(f"Using model: {settings.model_name}")
 
-    def _setup_logging(self):
-        """Configure logging system."""
-        self.settings.log_dir.mkdir(parents=True, exist_ok=True)
-        log_file = self.settings.log_dir / f"upscaler_{time.strftime('%Y%m%d_%H%M%S')}.log"
+    def _setup_environment(self) -> Path:
+        """
+        Set up the processing environment and dependencies.
 
-        logger.remove()  # Remove default handler
-        logger.add(
-            log_file,
-            rotation="100 MB",
-            retention="30 days",
-            level="INFO",
-            format="{time:YYYY-MM-DD HH:mm:ss} | {level} | {message}",
-        )
-        logger.add(
-            lambda msg: tqdm.write(msg, end=""),
-            colorize=True,
-            format="<green>{time:HH:mm:ss}</green> | {level} | {message}",
-            level="INFO",
-        )
-
-    def _setup_environment(self):
-        """Set up the processing environment for video upscaling.
-
-        This method performs the following setup tasks:
+        Performs the following setup tasks:
         1. Verifies CUDA GPU availability
-        2. Creates necessary directories
+        2. Creates output directories
         3. Clones and installs Real-ESRGAN if not present
-        4. Downloads required model weights
+
+        Returns:
+            Path to the Real-ESRGAN installation
 
         Raises:
             RuntimeError: If no CUDA-capable GPU is detected
             subprocess.CalledProcessError: If dependency installation fails
         """
-        logger.info("Setting up environment...")
         if not torch.cuda.is_available():
             raise RuntimeError("GPU not detected. CUDA-capable GPU is required.")
+
         self.settings.output_dir.mkdir(parents=True, exist_ok=True)
-        self.realesrgan_path = Path("../Real-ESRGAN")
-        if not self.realesrgan_path.exists():
-            logger.info("Cloning Real-ESRGAN repository...")
-            git.Repo.clone_from(self.REALESRGAN_REPO, self.realesrgan_path)
-            logger.info("Installing dependencies...")
-            subprocess.run(["pip", "install", "-r", str(self.realesrgan_path / "requirements.txt")], check=True)
-            subprocess.run(["python", "setup.py", "develop"], cwd=self.realesrgan_path, check=True)
+        realesrgan_path = Path("../Real-ESRGAN")
 
-        self._download_model_weights()
-        logger.info("Environment setup complete")
+        if not realesrgan_path.exists():
+            logger.info("Setting up Real-ESRGAN...")
+            git.Repo.clone_from(self.REALESRGAN_REPO, realesrgan_path)
+            subprocess.run(["pip", "install", "-r", str(realesrgan_path / "requirements.txt")], check=True)
 
-    def _download_model_weights(self):
-        """Download model weights if not present."""
-        weights_dir = self.realesrgan_path / "weights"
-        weights_dir.mkdir(exist_ok=True)
+        return realesrgan_path
 
-        model_path = weights_dir / f"{self.settings.model_name}.pth"
-        if not model_path.exists():
-            logger.info(f"Downloading {self.settings.model_name} weights...")
-            url = self.MODEL_URLS[self.settings.model_name]
-            subprocess.run(["wget", url, "-O", str(model_path)], check=True)
+    def process_video(self, video_path: Path) -> float:
+        """
+        Process a single video through the upscaling pipeline.
 
-    def _setup_device(self) -> torch.device:
-        """Set up and return the processing device."""
-        device = torch.device(f"cuda:{self.settings.gpu_device}")
-        logger.info(f"Using device: {device}")
-        return device
+        Handles the complete processing of one video including:
+        1. Output path setup
+        2. Model configuration
+        3. Video processing
+        4. Error handling
 
-    def process_video(self) -> Path:
-        """Process and upscale the input video.
-
-        This method handles the complete video processing pipeline:
-        1. Initializes resource monitoring
-        2. Opens and validates the input video
-        3. Configures output paths
-        4. Runs the upscaling process
-        5. Collects and logs performance metrics
+        Args:
+            video_path: Path to the input video file
 
         Returns:
-            Path: Path to the processed output video file
+            Total inference time in seconds
 
         Raises:
-            Exception: Any processing errors with detailed error messages
+            RuntimeError: If video processing fails
+            subprocess.CalledProcessError: If subprocess execution fails
         """
-        logger.info(f"Processing video: {self.settings.video_path}")
-        self.monitor.start()
+        start_time = time.time()
 
-        try:
-            # Get video info
-            cap = cv2.VideoCapture(str(self.settings.video_path))
-            total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-            fps = cap.get(cv2.CAP_PROP_FPS)
+        output_dir = self.settings.output_dir / self.settings.model_name
+        output_dir.mkdir(parents=True, exist_ok=True)
+        output_path = output_dir / f"{video_path.stem}_output.mp4"
 
-            # Set up output
-            output_path = self._setup_output_path()
-
-            # Process with Real-ESRGAN
-            logger.info("Running Real-ESRGAN upscaling...")
-            result_path = self._run_upscaling()
-
-            # Log final metrics
-            metrics = self.monitor.get_metrics()
-            logger.info("Processing complete. Metrics:")
-            for key, value in metrics.items():
-                logger.info(f"{key}: {value}")
-
-            return result_path
-
-        except Exception as e:
-            logger.error(f"Error processing video: {str(e)}")
-            raise
-        finally:
-            if "cap" in locals():
-                cap.release()
-
-    def _setup_output_path(self) -> Path:
-        """Set up output path for processed video."""
-        output_name = (
-            f"{self.settings.video_path.stem}" f"_{self.settings.model_name}" f"_x{self.settings.scale_factor}.mp4"
-        )
-        return self.settings.output_dir / output_name
-
-    def _run_upscaling(self) -> Path:
-        """Execute the Real-ESRGAN upscaling process.
-
-        This method constructs and executes the command-line interface for Real-ESRGAN
-        video processing, handling all necessary arguments and options based on the
-        current settings.
-
-        The following settings are supported:
-        - Model selection
-        - Scale factor
-        - Tile size
-        - Half precision mode
-        - Face enhancement
-        - Custom output suffix
-
-        Returns:
-            Path: Path to the processed output video file
-
-        Raises:
-            subprocess.CalledProcessError: If the upscaling process fails
-        """
-        input_path = str(self.settings.video_path)
-        output_dir = str(self.settings.output_dir)
-
-        # Build command with correct arguments
         cmd = [
             "python",
             str(self.realesrgan_path / "inference_realesrgan_video.py"),
             "-i",
-            input_path,
+            str(video_path),
             "-o",
-            output_dir,
+            str(output_path),
             "-n",
             self.settings.model_name,
             "-s",
@@ -292,43 +209,89 @@ class VideoUpscaler:
             str(self.settings.tile_size),
         ]
 
-        # Optional arguments
         if not self.settings.use_half_precision:
             cmd.append("--fp32")
-
         if self.settings.face_enhance:
             cmd.append("--face_enhance")
 
-        if self.settings.suffix:
-            cmd.extend(["--suffix", self.settings.suffix])
+        process = subprocess.run(cmd, capture_output=True, text=True)
+        if process.returncode != 0:
+            raise RuntimeError(f"Processing failed: {process.stderr}")
 
-        logger.info(f"Running command: {' '.join(cmd)}")
+        inference_time = time.time() - start_time
+        return inference_time
 
-        try:
-            process = subprocess.run(cmd, check=True, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
-            logger.debug(f"Process output: {process.stdout}")
+    def process_batch(self) -> Dict[str, Any]:
+        """
+        Process multiple videos in batch mode with metrics collection.
 
-        except subprocess.CalledProcessError as e:
-            logger.error(f"Command failed with error: {e.stderr}")
-            raise
+        Processes all MP4 videos in the input directory, collecting metrics
+        and handling errors for each video individually. Failed videos are
+        logged but don't stop the batch processing.
 
-        # Get output path
-        output_filename = f"{self.settings.video_path.stem}_out.mp4"
-        output_path = self.settings.output_dir / output_filename
+        Returns:
+            Dictionary containing batch processing metrics:
+                - Model information
+                - Timing statistics
+                - Individual video results
+                - Completion timestamp
 
-        return output_path
+        Raises:
+            ValueError: If no MP4 files are found in input directory
+            Exception: For other processing errors
+
+        Note:
+            Metrics are automatically saved to a JSON file in the output directory
+        """
+        video_files = list(self.settings.input_dir.glob("*.mp4"))
+        if not video_files:
+            raise ValueError(f"No MP4 files found in {self.settings.input_dir}")
+
+        metrics = BatchMetrics(self.settings.model_name, len(video_files))
+        logger.info(f"Processing {len(video_files)} videos...")
+
+        with tqdm(video_files, desc="Processing videos",ascii=" ▖▘▝▗▚▞█ ") as pbar:
+            for video_path in pbar:
+                try:
+                    inference_time = self.process_video(video_path)
+                    metrics.add_video_result(video_path.name, inference_time)
+                    pbar.set_postfix({"Last inference": f"{inference_time:.2f}s"})
+                except Exception as e:
+                    logger.error(f"Failed to process {video_path.name}: {str(e)}")
+
+        # Save batch metrics
+        metrics_dir = self.settings.output_dir / "metrics"
+        metrics_dir.mkdir(exist_ok=True)
+        metrics_path = metrics_dir / f"batch_metrics_{datetime.now():%Y%m%d_%H%M%S}.json"
+
+        summary = metrics.get_summary()
+        with open(metrics_path, "w") as f:
+            json.dump(summary, f, indent=4)
+
+        return summary
 
 
 def main():
     """Main entry point."""
     try:
         settings = UpscalerSettings()
+
         upscaler = VideoUpscaler(settings)
-        output_path = upscaler.process_video()
-        logger.success(f"Video processed successfully: {output_path}")
+        summary = upscaler.process_batch()
+
+        # Print summary
+        print("\nBatch Processing Summary:")
+        print(f"Model: {summary['model_name']}")
+        print(f"Total videos processed: {summary['total_videos']}")
+        print(f"Total batch time: {summary['total_batch_time']:.2f}s")
+        print(f"Average time per video: {summary['average_time_per_video']:.2f}s")
+        print("\nIndividual video times:")
+        for video in summary["videos"]:
+            print(f"{video['name']}: {video['inference_time']:.2f}s")
+
     except Exception as e:
-        logger.error(f"Processing failed: {str(e)}")
-        sys.exit(1)
+        logger.error(f"Batch processing failed: {str(e)}")
+        raise
 
 
 if __name__ == "__main__":
