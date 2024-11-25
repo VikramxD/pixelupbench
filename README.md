@@ -68,8 +68,4 @@ Dataset→ 10 clips (5 real-life + 5 anime)
 🔄 Each test runs 3 times (averaged)
 ```
 
-## Legend
-⏳ - Testing in Progress
-✅ - Testing Complete
-⚠️ - Issues Found
-🎯 - Target Metrics Met
+
