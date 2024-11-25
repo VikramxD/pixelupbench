@@ -1,0 +1,23 @@
+2024-11-25 12:08:02 | INFO | Using device: cuda:0
+2024-11-25 12:08:02 | INFO | Processing video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-11-25 12:08:02 | INFO | Running Real-ESRGAN upscaling...
+2024-11-25 12:08:02 | INFO | Running command: python ../Real-ESRGAN/inference_realesrgan_video.py -i /root/pixelupbench/data/realism/low_rel.mp4 -o results -n RealESRGAN_x4plus -s 4 -t 0 --suffix out
+2024-11-25 12:08:08 | ERROR | Command failed with error: /root/pixelupbench/.venv/lib/python3.11/site-packages/torchvision/transforms/functional_tensor.py:5: UserWarning: The torchvision.transforms.functional_tensor module is deprecated in 0.15 and will be **removed in 0.17**. Please don't rely on it. You probably just need to use APIs in torchvision.transforms.functional or in torchvision.transforms.v2.functional.
+  warnings.warn(
+Traceback (most recent call last):
+  File "/root/pixelupbench/scripts/../Real-ESRGAN/inference_realesrgan_video.py", line 398, in <module>
+    main()
+  File "/root/pixelupbench/scripts/../Real-ESRGAN/inference_realesrgan_video.py", line 390, in main
+    run(args)
+  File "/root/pixelupbench/scripts/../Real-ESRGAN/inference_realesrgan_video.py", line 292, in run
+    inference_video(args, video_save_path)
+  File "/root/pixelupbench/scripts/../Real-ESRGAN/inference_realesrgan_video.py", line 249, in inference_video
+    reader = Reader(args, total_workers, worker_idx)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/root/pixelupbench/scripts/../Real-ESRGAN/inference_realesrgan_video.py", line 69, in __init__
+    ffmpeg.input(video_path).output('pipe:', format='rawvideo', pix_fmt='bgr24',
+    ^^^^^^^^^^^^
+AttributeError: module 'ffmpeg' has no attribute 'input'
+
+2024-11-25 12:08:08 | ERROR | Error processing video: Command '['python', '../Real-ESRGAN/inference_realesrgan_video.py', '-i', '/root/pixelupbench/data/realism/low_rel.mp4', '-o', 'results', '-n', 'RealESRGAN_x4plus', '-s', '4', '-t', '0', '--suffix', 'out']' returned non-zero exit status 1.
+2024-11-25 12:08:08 | ERROR | Processing failed: Command '['python', '../Real-ESRGAN/inference_realesrgan_video.py', '-i', '/root/pixelupbench/data/realism/low_rel.mp4', '-o', 'results', '-n', 'RealESRGAN_x4plus', '-s', '4', '-t', '0', '--suffix', 'out']' returned non-zero exit status 1.

@@ -1,0 +1,11 @@
+2024-11-25 12:11:48 | INFO | Using device: cuda:0
+2024-11-25 12:11:48 | INFO | Processing video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-11-25 12:11:48 | INFO | Running Real-ESRGAN upscaling...
+2024-11-25 12:11:48 | INFO | Running command: python ../Real-ESRGAN/inference_realesrgan_video.py -i /root/pixelupbench/data/realism/low_rel.mp4 -o results -n RealESRGAN_x4plus -s 4 -t 0 --suffix out
+2024-11-25 12:15:29 | INFO | Processing complete. Metrics:
+2024-11-25 12:15:29 | INFO | gpu_memory_used: 4.0
+2024-11-25 12:15:29 | INFO | gpu_utilization: 0.0
+2024-11-25 12:15:29 | INFO | cpu_percent: 15.5
+2024-11-25 12:15:29 | INFO | ram_percent: 13.3
+2024-11-25 12:15:29 | INFO | time_elapsed: 221.6661570072174
+2024-11-25 12:15:29 | SUCCESS | Video processed successfully: results/low_rel_out.mp4

@@ -1,0 +1,5 @@
+2024-11-25 12:00:40 | INFO | Using device: cuda:0
+2024-11-25 12:00:40 | INFO | Processing video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-11-25 12:00:40 | INFO | Running Real-ESRGAN upscaling...
+2024-11-25 12:00:44 | ERROR | Error processing video: Command '['python', '../Real-ESRGAN/inference_realesrgan_video.py', '-n', 'RealESRGAN_x4plus', '-i', '/root/pixelupbench/data/realism/low_rel.mp4', '-o', '../results/low_rel_RealESRGAN_x4plus_x4.mp4', '--outscale', '4', '--tile', '0', '--tile_pad', '10', '']' returned non-zero exit status 2.
+2024-11-25 12:00:44 | ERROR | Processing failed: Command '['python', '../Real-ESRGAN/inference_realesrgan_video.py', '-n', 'RealESRGAN_x4plus', '-i', '/root/pixelupbench/data/realism/low_rel.mp4', '-o', '../results/low_rel_RealESRGAN_x4plus_x4.mp4', '--outscale', '4', '--tile', '0', '--tile_pad', '10', '']' returned non-zero exit status 2.

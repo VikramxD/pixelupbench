@@ -1,0 +1,12 @@
+torch
+torchvision
+basicsr
+facexlib
+gfpgan
+ffmpeg-python
+opencv-python
+pillow
+tqdm
+pydantic
+pydantic-settings
+loguru
