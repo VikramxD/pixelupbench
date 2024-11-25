@@ -12,7 +12,7 @@ class AuraSettings(BaseSettings):
         description="Directory containing input videos"
     )
     output_dir: Path = Field(
-        default=Path("results"),
+        default=Path("../results"),
         description="Base directory for outputs"
     )
     gpu_device: int = Field(
