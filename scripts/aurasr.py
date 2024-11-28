@@ -1,30 +1,47 @@
 """
 AURA-SR Video Upscaling Pipeline
 
-A Pipeline for benchmarking processing videos using the AURA-SR upscaling model.
-Provides comprehensive metrics tracking, error handling, and progress monitoring for
-large-scale video processing operations.
+A production-grade pipeline for processing and upscaling videos using the AURA-SR model.
+This module provides comprehensive batch processing capabilities with robust error handling,
+metrics collection, and progress monitoring.
 
-Features:
-    - Automated batch video processing
-    - Real-time progress tracking
-    - Performance metrics collection and export
-    - Comprehensive error handling
-    - GPU acceleration support
-    - JSON-based metrics reporting
+Key Features:
+    - Automated batch video processing with 4x upscaling
+    - Real-time progress tracking with ETA
+    - Comprehensive performance metrics and JSON reporting
+    - GPU acceleration with CUDA support
+    - Robust error handling and logging
+    - Automatic output organization
+
+Technical Specifications:
+    - Input: MP4 video files
+    - Output: 4x upscaled MP4 videos
+    - GPU Memory: ~4GB for 1080p video
+    - Supported Formats: RGB/BGR video frames
+    - Processing: Frame-by-frame with batched inference
 
 Dependencies:
-    - AURA-SR model
-    - PyTorch with CUDA support
-    - OpenCV
-    - NumPy
-    - tqdm for progress tracking
-    - loguru for logging
+    - torch>=1.7.0
+    - opencv-python>=4.5.0
+    - numpy>=1.19.0
+    - tqdm>=4.45.0
+    - loguru>=0.5.0
+    - aura-sr>=2.0.0
 
-Typical usage:
-    settings = AuraSettings(input_dir=Path("videos"))
-    upscaler = AuraUpscaler(settings)
-    metrics = upscaler.process_batch()
+Example:
+    >>> from pathlib import Path
+    >>> from configs.aurasr_settings import AuraSettings
+    >>> 
+    >>> settings = AuraSettings(input_dir=Path("videos"))
+    >>> upscaler = AuraUpscaler(settings)
+    >>> metrics = upscaler.process_batch()
+    >>> print(f"Processed {metrics['total_videos']} videos")
+
+Notes:
+    - Ensure CUDA toolkit is properly installed for GPU acceleration
+    - Input directory should contain only MP4 files for processing
+    - Output directory structure is automatically created
+    - Metrics are saved in JSON format with timestamps
 """
 
 import os
@@ -44,20 +61,27 @@ from configs.aurasr_settings import AuraSettings
 
 class BatchMetrics:
     """
-    Tracks and manages performance metrics for AURA-SR batch processing operations.
-
-    This class handles the collection and aggregation of processing metrics across
-    multiple videos, providing summary statistics and individual video results.
-
+    Comprehensive metrics tracking system for AURA-SR batch processing operations.
+    
+    Collects, aggregates, and reports performance metrics across multiple video
+    processing operations, providing both individual and batch-level statistics.
+    
     Attributes:
-        start_time (float): Unix timestamp when batch processing started
-        num_videos (int): Total number of videos in the batch
-        videos_processed (List[Dict[str, Union[str, float]]]): List of processed video results
-
+        start_time (float): Unix timestamp marking batch start
+        num_videos (int): Total number of videos in current batch
+        videos_processed (List[Dict]): List of processed video results containing:
+            - name: Video filename
+            - inference_time: Processing duration in seconds
+    
+    Methods:
+        add_video_result: Record metrics for a single video
+        get_summary: Generate comprehensive batch processing report
+    
     Example:
-        metrics = BatchMetrics(num_videos=5)
-        metrics.add_video_result("video1.mp4", 10.5)
-        summary = metrics.get_summary()
+        >>> metrics = BatchMetrics(num_videos=3)
+        >>> metrics.add_video_result("video1.mp4", 45.2)
+        >>> summary = metrics.get_summary()
+        >>> print(f"Average processing time: {summary['average_time_per_video']:.2f}s")
     """
 
     def __init__(self, num_videos: int) -> None:
@@ -111,19 +135,39 @@ class BatchMetrics:
 class AuraUpscaler:
     """
     Production-grade video upscaling system using AURA-SR model.
-
-    This class implements a comprehensive video upscaling pipeline using the AURA-SR
-    model, supporting batch processing with metrics collection and error handling.
-
+    
+    Implements a complete video processing pipeline with GPU acceleration,
+    batch processing capabilities, and comprehensive error handling.
+    
     Attributes:
-        settings (AuraSettings): Configuration settings for the upscaler
-        device (torch.device): GPU device for processing
-        model (AuraSR): Loaded AURA-SR model instance
-
+        settings (AuraSettings): Configuration parameters for processing
+        device (torch.device): CUDA device for GPU acceleration
+        model (AuraSR): Loaded instance of AURA-SR model
+    
+    Key Features:
+        - Automatic GPU device management
+        - Batch video processing with progress tracking
+        - Comprehensive metrics collection
+        - Organized output directory structure
+        - Error resilience with detailed logging
+    
+    Methods:
+        process_video: Process single video with progress tracking
+        process_batch: Process multiple videos with metrics collection
+    
     Example:
-        settings = AuraSettings(input_dir=Path("videos"))
-        upscaler = AuraUpscaler(settings)
-        metrics = upscaler.process_batch()
+        >>> settings = AuraSettings(
+        ...     input_dir=Path("videos"),
+        ...     output_dir=Path("results"),
+        ...     gpu_device=0
+        ... )
+        >>> upscaler = AuraUpscaler(settings)
+        >>> metrics = upscaler.process_batch()
+    
+    Raises:
+        RuntimeError: If GPU initialization fails
+        ValueError: If video processing fails
+        Exception: For other processing errors
     """
 
     def __init__(self, settings: AuraSettings) -> None:
@@ -164,22 +208,29 @@ class AuraUpscaler:
     def process_video(self, video_path: Path) -> float:
         """
         Process a single video through the AURA-SR upscaling pipeline.
-
-        Handles the complete processing of one video including:
-        1. Video loading and validation
-        2. Output path setup
-        3. Frame-by-frame processing with proper format conversion
-        4. Progress tracking
-
+        
+        Performs complete video processing workflow:
+            1. Video validation and metadata extraction
+            2. Frame-by-frame upscaling with 4x resolution
+            3. Progress tracking and error handling
+            4. Output video generation with metadata preservation
+        
         Args:
-            video_path: Path to the input video file
-
+            video_path (Path): Path to input MP4 video file
+        
         Returns:
-            float: Total inference time in seconds
-
+            float: Total processing time in seconds
+        
         Raises:
-            ValueError: If video cannot be read
+            ValueError: If video file is corrupt or unreadable
+            RuntimeError: If processing fails mid-video
             Exception: For other processing errors
+        
+        Technical Details:
+            - Preserves original video FPS
+            - Converts between RGB/BGR as needed
+            - Handles PIL Image to numpy array conversion
+            - Uses MP4V codec for output
         """
         start_time = time.time()
 
@@ -236,26 +287,28 @@ class AuraUpscaler:
 
     def process_batch(self) -> Dict[str, Any]:
         """
-        Process multiple videos in batch mode with comprehensive metrics collection.
-
-        Processes all MP4 videos in the input directory, collecting metrics
-        and handling errors for each video individually. Failed videos are
-        logged but don't stop the batch processing.
-
+        Execute batch processing of multiple videos with comprehensive metrics.
+        
+        Performs parallel processing of all MP4 videos in the input directory,
+        with detailed metrics collection and error handling per video.
+        
         Returns:
-            Dict containing batch processing metrics:
-                - Model information
-                - Timing statistics
-                - Individual video results
-                - Completion timestamp
-
+            Dict[str, Any]: Comprehensive metrics including:
+                - model_name: "AURA-SR"
+                - total_videos: Number processed
+                - total_batch_time: Total processing duration
+                - average_time_per_video: Mean processing time
+                - videos: List of individual video results
+                - timestamp: ISO format completion time
+        
         Raises:
-            ValueError: If no MP4 files are found in input directory
-            Exception: For other processing errors
-
-        Note:
-            Metrics are automatically saved to a JSON file in the output directory
-            with timestamp in the filename.
+            ValueError: If no MP4 files found in input directory
+            Exception: For batch processing failures
+        
+        Notes:
+            - Failed videos are logged but don't stop batch processing
+            - Metrics are automatically saved to JSON with timestamp
+            - Progress bar shows real-time processing status
         """
         video_files = list(self.settings.input_dir.glob("*.mp4"))
         if not video_files:
