@@ -1,0 +1,10 @@
+{
+    "video_name": "low_res.mp4",
+    "model_path": "Phips/1xDeH264_realplksr",
+    "start_time": "2024-11-28T16:00:19.307458",
+    "processed_frames": 220,
+    "total_frames": 0,
+    "fps": 3.6923789265356444,
+    "inference_time": 59.582183837890625,
+    "total_time": 59.87343907356262
+}

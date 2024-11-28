@@ -1,0 +1,149 @@
+2024-11-28 15:18:57 | INFO     | __main__:main:332 - Starting OpenModelDB video processing
+2024-11-28 15:18:57 | INFO     | __main__:main:336 - Initializing processor with model: 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:18:57 | INFO     | __main__:__init__:113 - Loading model: Phips/4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:19:01 | INFO     | __main__:__init__:118 - Successfully loaded model Phips/4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:19:01 | INFO     | __main__:main:345 - Found 3 videos to process
+2024-11-28 15:19:01 | INFO     | __main__:main:351 - Processing low_rel.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:19:01 | INFO     | __main__:process_video:189 - Starting processing of video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-11-28 15:19:01 | ERROR    | __main__:process_frame:153 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 640, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:01 | ERROR    | __main__:process_video:264 - Error processing low_rel.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 640, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:01 | ERROR    | __main__:main:355 - Failed to process low_rel.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 640, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:01 | INFO     | __main__:main:351 - Processing low_res.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:19:01 | INFO     | __main__:process_video:189 - Starting processing of video: /root/pixelupbench/data/realism/low_res.mp4
+2024-11-28 15:19:01 | ERROR    | __main__:process_frame:153 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[640, 1, 360, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:01 | ERROR    | __main__:process_video:264 - Error processing low_res.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[640, 1, 360, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:01 | ERROR    | __main__:main:355 - Failed to process low_res.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[640, 1, 360, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:01 | INFO     | __main__:main:351 - Processing restore.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:19:01 | INFO     | __main__:process_video:189 - Starting processing of video: /root/pixelupbench/data/realism/restore.mp4
+2024-11-28 15:19:01 | ERROR    | __main__:process_frame:153 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 480, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:01 | ERROR    | __main__:process_video:264 - Error processing restore.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 480, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:01 | ERROR    | __main__:main:355 - Failed to process restore.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 480, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:01 | INFO     | __main__:main:384 - OpenModelDB processing completed
+2024-11-28 15:19:25 | INFO     | __main__:main:332 - Starting OpenModelDB video processing
+2024-11-28 15:19:25 | INFO     | __main__:main:336 - Initializing processor with model: 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:19:25 | INFO     | __main__:__init__:113 - Loading model: Phips/4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:19:27 | INFO     | __main__:__init__:118 - Successfully loaded model Phips/4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:19:27 | INFO     | __main__:main:345 - Found 3 videos to process
+2024-11-28 15:19:27 | INFO     | __main__:main:351 - Processing low_rel.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:19:27 | INFO     | __main__:process_video:189 - Starting processing of video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-11-28 15:19:27 | ERROR    | __main__:process_frame:153 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 640, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:27 | ERROR    | __main__:process_video:264 - Error processing low_rel.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 640, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:27 | ERROR    | __main__:main:355 - Failed to process low_rel.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 640, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:27 | INFO     | __main__:main:351 - Processing low_res.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:19:27 | INFO     | __main__:process_video:189 - Starting processing of video: /root/pixelupbench/data/realism/low_res.mp4
+2024-11-28 15:19:27 | ERROR    | __main__:process_frame:153 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[640, 1, 360, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:27 | ERROR    | __main__:process_video:264 - Error processing low_res.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[640, 1, 360, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:27 | ERROR    | __main__:main:355 - Failed to process low_res.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[640, 1, 360, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:27 | INFO     | __main__:main:351 - Processing restore.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:19:27 | INFO     | __main__:process_video:189 - Starting processing of video: /root/pixelupbench/data/realism/restore.mp4
+2024-11-28 15:19:27 | ERROR    | __main__:process_frame:153 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 480, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:27 | ERROR    | __main__:process_video:264 - Error processing restore.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 480, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:27 | ERROR    | __main__:main:355 - Failed to process restore.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 480, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:19:27 | INFO     | __main__:main:384 - OpenModelDB processing completed
+2024-11-28 15:20:37 | INFO     | __main__:main:355 - Starting OpenModelDB video processing
+2024-11-28 15:20:37 | INFO     | __main__:main:359 - Initializing processor with model: 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:20:37 | INFO     | __main__:__init__:113 - Loading model: Phips/4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:20:39 | INFO     | __main__:__init__:118 - Successfully loaded model Phips/4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:20:39 | INFO     | __main__:main:368 - Found 3 videos to process
+2024-11-28 15:20:39 | INFO     | __main__:main:374 - Processing low_rel.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:20:39 | INFO     | __main__:process_video:212 - Starting processing of video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-11-28 15:20:39 | ERROR    | __main__:process_frame:176 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 640, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:20:39 | ERROR    | __main__:process_video:287 - Error processing low_rel.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 640, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:20:39 | ERROR    | __main__:main:378 - Failed to process low_rel.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 640, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:20:39 | INFO     | __main__:main:374 - Processing low_res.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:20:39 | INFO     | __main__:process_video:212 - Starting processing of video: /root/pixelupbench/data/realism/low_res.mp4
+2024-11-28 15:20:39 | ERROR    | __main__:process_frame:176 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[640, 1, 360, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:20:39 | ERROR    | __main__:process_video:287 - Error processing low_res.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[640, 1, 360, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:20:39 | ERROR    | __main__:main:378 - Failed to process low_res.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[640, 1, 360, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:20:39 | INFO     | __main__:main:374 - Processing restore.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:20:39 | INFO     | __main__:process_video:212 - Starting processing of video: /root/pixelupbench/data/realism/restore.mp4
+2024-11-28 15:20:39 | ERROR    | __main__:process_frame:176 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 480, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:20:39 | ERROR    | __main__:process_video:287 - Error processing restore.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 480, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:20:39 | ERROR    | __main__:main:378 - Failed to process restore.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 480, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:20:39 | INFO     | __main__:main:407 - OpenModelDB processing completed
+2024-11-28 15:21:20 | INFO     | __main__:main:356 - Starting OpenModelDB video processing
+2024-11-28 15:21:20 | INFO     | __main__:main:360 - Initializing processor with model: 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:21:20 | INFO     | __main__:__init__:114 - Loading model: Phips/4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:21:22 | INFO     | __main__:__init__:119 - Successfully loaded model Phips/4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:21:22 | INFO     | __main__:main:369 - Found 3 videos to process
+2024-11-28 15:21:22 | INFO     | __main__:main:375 - Processing low_rel.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:21:22 | INFO     | __main__:process_video:213 - Starting processing of video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-11-28 15:21:22 | ERROR    | __main__:process_frame:177 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 640, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:21:22 | ERROR    | __main__:process_video:288 - Error processing low_rel.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 640, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:21:22 | ERROR    | __main__:main:379 - Failed to process low_rel.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 640, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:21:22 | INFO     | __main__:main:375 - Processing low_res.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:21:22 | INFO     | __main__:process_video:213 - Starting processing of video: /root/pixelupbench/data/realism/low_res.mp4
+2024-11-28 15:21:22 | ERROR    | __main__:process_frame:177 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[640, 1, 360, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:21:22 | ERROR    | __main__:process_video:288 - Error processing low_res.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[640, 1, 360, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:21:22 | ERROR    | __main__:main:379 - Failed to process low_res.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[640, 1, 360, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:21:22 | INFO     | __main__:main:375 - Processing restore.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:21:22 | INFO     | __main__:process_video:213 - Starting processing of video: /root/pixelupbench/data/realism/restore.mp4
+2024-11-28 15:21:22 | ERROR    | __main__:process_frame:177 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 480, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:21:22 | ERROR    | __main__:process_video:288 - Error processing restore.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 480, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:21:22 | ERROR    | __main__:main:379 - Failed to process restore.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 480, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:21:22 | INFO     | __main__:main:408 - OpenModelDB processing completed
+2024-11-28 15:22:13 | INFO     | __main__:main:364 - Starting OpenModelDB video processing
+2024-11-28 15:22:13 | INFO     | __main__:main:368 - Initializing processor with model: 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:22:13 | INFO     | __main__:__init__:114 - Loading model: Phips/4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:22:15 | INFO     | __main__:__init__:119 - Successfully loaded model Phips/4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:22:15 | INFO     | __main__:main:377 - Found 3 videos to process
+2024-11-28 15:22:15 | INFO     | __main__:main:383 - Processing low_rel.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:22:15 | INFO     | __main__:process_video:221 - Starting processing of video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-11-28 15:22:15 | ERROR    | __main__:process_frame:185 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 640, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:22:15 | ERROR    | __main__:process_video:296 - Error processing low_rel.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 640, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:22:15 | ERROR    | __main__:main:387 - Failed to process low_rel.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 640, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:22:15 | INFO     | __main__:main:383 - Processing low_res.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:22:15 | INFO     | __main__:process_video:221 - Starting processing of video: /root/pixelupbench/data/realism/low_res.mp4
+2024-11-28 15:22:15 | ERROR    | __main__:process_frame:185 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[640, 1, 360, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:22:15 | ERROR    | __main__:process_video:296 - Error processing low_res.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[640, 1, 360, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:22:15 | ERROR    | __main__:main:387 - Failed to process low_res.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[640, 1, 360, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:22:15 | INFO     | __main__:main:383 - Processing restore.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:22:15 | INFO     | __main__:process_video:221 - Starting processing of video: /root/pixelupbench/data/realism/restore.mp4
+2024-11-28 15:22:15 | ERROR    | __main__:process_frame:185 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 480, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:22:15 | ERROR    | __main__:process_video:296 - Error processing restore.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 480, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:22:15 | ERROR    | __main__:main:387 - Failed to process restore.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 480, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:22:15 | INFO     | __main__:main:416 - OpenModelDB processing completed
+2024-11-28 15:26:15 | INFO     | __main__:main:311 - Starting OpenModelDB video processing
+2024-11-28 15:26:15 | INFO     | __main__:main:315 - Initializing processor with model: 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:26:15 | INFO     | __main__:__init__:114 - Loading model: Phips/4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:26:17 | INFO     | __main__:__init__:119 - Successfully loaded model Phips/4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:26:17 | INFO     | __main__:main:324 - Found 3 videos to process
+2024-11-28 15:26:17 | INFO     | __main__:main:330 - Processing low_rel.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:26:17 | ERROR    | __main__:process_frame:182 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 640, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:26:17 | ERROR    | __main__:main:334 - Failed to process low_rel.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 640, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:26:17 | INFO     | __main__:main:330 - Processing low_res.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:26:17 | ERROR    | __main__:process_frame:182 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[640, 1, 360, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:26:17 | ERROR    | __main__:main:334 - Failed to process low_res.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[640, 1, 360, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:26:17 | INFO     | __main__:main:330 - Processing restore.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:26:17 | ERROR    | __main__:process_frame:182 - Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 480, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:26:17 | ERROR    | __main__:main:334 - Failed to process restore.mp4: Frame processing failed: Given groups=1, weight of size [64, 3, 3, 3], expected input[360, 1, 480, 3] to have 3 channels, but got 1 channels instead
+2024-11-28 15:26:17 | INFO     | __main__:main:363 - OpenModelDB processing completed
+2024-11-28 15:27:27 | INFO     | __main__:main:308 - Starting OpenModelDB video processing
+2024-11-28 15:27:27 | INFO     | __main__:main:312 - Initializing processor with model: 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:27:27 | INFO     | __main__:__init__:115 - Loading model: Phips/4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:27:29 | INFO     | __main__:__init__:120 - Successfully loaded model Phips/4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:27:29 | INFO     | __main__:main:321 - Found 3 videos to process
+2024-11-28 15:27:29 | INFO     | __main__:main:327 - Processing low_rel.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:29:16 | INFO     | __main__:main:327 - Processing low_res.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:30:49 | INFO     | __main__:main:327 - Processing restore.mp4 with 4xNomosWebPhoto_RealPLKSR
+2024-11-28 15:32:05 | ERROR    | __main__:main:357 - Fatal error in main processing loop
+2024-11-28 15:32:05 | INFO     | __main__:main:360 - OpenModelDB processing completed
+2024-11-28 15:59:07 | INFO     | __main__:main:354 - Starting OpenModelDB video processing
+2024-11-28 15:59:07 | INFO     | __main__:main:358 - Initializing processor with model: DeH264
+2024-11-28 15:59:07 | INFO     | __main__:__init__:115 - Loading model: Phips/1xDeH264_realplksr
+2024-11-28 15:59:10 | INFO     | __main__:__init__:120 - Successfully loaded model Phips/1xDeH264_realplksr
+2024-11-28 15:59:10 | INFO     | __main__:main:370 - Found 3 videos to process
+2024-11-28 15:59:10 | INFO     | __main__:main:375 - Processing low_rel.mp4 with DeH264
+2024-11-28 15:59:10 | INFO     | __main__:process_video:183 - Starting processing of video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-11-28 16:00:19 | INFO     | __main__:process_video:245 - Completed processing low_rel.mp4 - FPS: 3.69, Time: 69.06s
+2024-11-28 16:00:19 | INFO     | __main__:save_metrics:291 - Saved processing metrics to ../results/metrics/low_rel_1xDeH264_realplksr_metrics.json
+2024-11-28 16:00:19 | INFO     | __main__:main:375 - Processing low_res.mp4 with DeH264
+2024-11-28 16:00:19 | INFO     | __main__:process_video:183 - Starting processing of video: /root/pixelupbench/data/realism/low_res.mp4
+2024-11-28 16:01:19 | INFO     | __main__:process_video:245 - Completed processing low_res.mp4 - FPS: 3.69, Time: 59.87s
+2024-11-28 16:01:19 | INFO     | __main__:save_metrics:291 - Saved processing metrics to ../results/metrics/low_res_1xDeH264_realplksr_metrics.json
+2024-11-28 16:01:19 | INFO     | __main__:main:375 - Processing restore.mp4 with DeH264
+2024-11-28 16:01:19 | INFO     | __main__:process_video:183 - Starting processing of video: /root/pixelupbench/data/realism/restore.mp4
+2024-11-28 16:02:12 | INFO     | __main__:process_video:245 - Completed processing restore.mp4 - FPS: 4.86, Time: 53.38s
+2024-11-28 16:02:12 | INFO     | __main__:save_metrics:291 - Saved processing metrics to ../results/metrics/restore_1xDeH264_realplksr_metrics.json
+2024-11-28 16:02:12 | INFO     | __main__:main:402 - Completed batch processing with DeH264
+2024-11-28 16:02:12 | INFO     | __main__:main:408 - OpenModelDB processing completed

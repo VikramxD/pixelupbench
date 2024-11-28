@@ -1,0 +1,21 @@
+{
+    "model_name": "DeH264",
+    "total_videos": 3,
+    "total_batch_time": 182.31889581680298,
+    "average_time_per_video": 60.77296527226766,
+    "videos": [
+        {
+            "name": "low_rel.mp4",
+            "inference_time": 69.05847573280334
+        },
+        {
+            "name": "low_res.mp4",
+            "inference_time": 59.87597417831421
+        },
+        {
+            "name": "restore.mp4",
+            "inference_time": 53.383646965026855
+        }
+    ],
+    "timestamp": "2024-11-28T16:02:12.567179"
+}

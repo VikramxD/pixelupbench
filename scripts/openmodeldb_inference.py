@@ -2,7 +2,7 @@
 OpenModelDB Video Inference Module
 
 Upscaling videos using OpenModelDB models.
-This module provides comprehensive video processing capabilities.
+This module provides comprehensive video processing capabilities
 
 Key Features:
     - Multi-model support with dynamic loading
@@ -41,11 +41,13 @@ import torch
 import time
 import json
 from pathlib import Path
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from datetime import datetime
 from tqdm import tqdm
 from loguru import logger
 from image_gen_aux import UpscaleWithModel
+import numpy as np
+from PIL import Image
 
 from configs.openmodeldb_settings import ModelConfig, UpscalerSettings
 
@@ -53,23 +55,23 @@ from configs.openmodeldb_settings import ModelConfig, UpscalerSettings
 class VideoProcessor:
     """
     video processing class using OpenModelDB upscaling models.
-    
+
     Implements a complete video processing pipeline with GPU acceleration,
     tile-based processing, and comprehensive metrics collection.
-    
+
     Attributes:
         settings (UpscalerSettings): Global configuration parameters
         model_path (str): HuggingFace model path
         tile_size (int): Processing tile dimensions
         model: Loaded upscaling model instance
         output_dir (Path): Directory for processed videos
-    
+
     Technical Details:
         - Uses tiled processing to handle high-resolution videos
         - Implements CUDA acceleration for GPU processing
         - Maintains processing metrics and logs
         - Handles video codec conversion and format management
-    
+
     Example:
         >>> settings = UpscalerSettings(input_dir=Path("videos"))
         >>> model_config = ModelConfig(
@@ -83,15 +85,15 @@ class VideoProcessor:
     def __init__(self, settings: UpscalerSettings, model_config: ModelConfig):
         """
         Initialize video processor with settings and model configuration.
-        
+
         Args:
             settings: Global upscaler configuration
             model_config: Model-specific configuration
-            
+
         Raises:
             RuntimeError: If CUDA GPU is not available
             ValueError: If model loading fails
-            
+
         Logs:
             - INFO: Model loading status
             - ERROR: Model loading failures
@@ -101,20 +103,20 @@ class VideoProcessor:
         self.settings = settings
         self.model_path = model_config.path
         self.tile_size = model_config.tile_size
-        
+
         if not torch.cuda.is_available():
             logger.error("CUDA GPU not detected")
             raise RuntimeError("CUDA-capable GPU is required for video processing")
-            
+
         self.output_dir = settings.output_dir / Path(model_config.path).stem
         self.output_dir.mkdir(parents=True, exist_ok=True)
         logger.debug(f"Created output directory: {self.output_dir}")
-        
+
         logger.info(f"Loading model: {model_config.path}")
         try:
-            self.model = UpscaleWithModel.from_pretrained(
-                model_config.path
-            ).to(f"cuda:{settings.gpu_device}")
+            self.model = UpscaleWithModel.from_pretrained(model_config.path).to(
+                f"cuda:{settings.gpu_device}"
+            )
             logger.info(f"Successfully loaded model {model_config.path}")
             logger.debug(f"Model loaded on GPU device {settings.gpu_device}")
         except Exception as e:
@@ -124,68 +126,60 @@ class VideoProcessor:
     def process_frame(self, frame: "np.ndarray") -> "np.ndarray":
         """
         Process a single frame using tile-based upscaling.
-        
+
         Implements memory-efficient processing using configurable tile sizes
         and GPU acceleration.
-        
+
         Args:
             frame: Input frame as numpy array
-            
+
         Returns:
             np.ndarray: Processed frame at higher resolution
-            
+
         Raises:
             RuntimeError: If frame processing fails
-            
+
         Logs:
             - ERROR: Frame processing failures
-            - DEBUG: Tile processing details
+            - DEBUG: Frame processing details
         """
         try:
-            logger.debug(f"Processing frame with tile size {self.tile_size}")
-            return self.model(
-                frame,
+            logger.debug(f"Input frame shape: {frame.shape}")
+
+            # Convert numpy array to PIL Image
+            if len(frame.shape) == 2:
+                # Convert grayscale to RGB
+                frame_pil = Image.fromarray(frame).convert("RGB")
+            else:
+                # Convert BGR to RGB
+                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                frame_pil = Image.fromarray(frame_rgb)
+
+            logger.debug(f"PIL Image size: {frame_pil.size} mode: {frame_pil.mode}")
+
+            # Process the frame
+            processed = self.model(
+                frame_pil,
                 tiling=True,
                 tile_width=self.tile_size,
-                tile_height=self.tile_size
+                tile_height=self.tile_size,
             )
+
+            # Convert back to numpy array in BGR format for OpenCV
+            if isinstance(processed, Image.Image):
+                processed = cv2.cvtColor(np.array(processed), cv2.COLOR_RGB2BGR)
+            elif isinstance(processed, np.ndarray):
+                processed = cv2.cvtColor(processed, cv2.COLOR_RGB2BGR)
+
+            logger.debug(f"Output frame shape: {processed.shape}")
+            return processed
+
         except Exception as e:
-            logger.error(f"Frame processing failed: {str(e)}")
+            logger.error(f"Frame processing failed: {str(e)}", exc_info=True)
             raise RuntimeError(f"Frame processing failed: {str(e)}")
 
     def process_video(self, video_path: Path) -> Dict[str, Any]:
-        """
-        Process complete video with metrics collection.
-        
-        Handles the entire video processing pipeline including:
-        1. Video loading and validation
-        2. Frame-by-frame processing
-        3. Output generation
-        4. Metrics collection
-        
-        Args:
-            video_path: Path to input video file
-            
-        Returns:
-            Dict containing processing metrics:
-                - video_name: Name of processed file
-                - model_path: Used model path
-                - start_time: Processing start timestamp
-                - processed_frames: Number of frames processed
-                - total_frames: Total video frames
-                - fps: Processing speed
-                - inference_time: Total processing time
-                - total_time: Total execution time
-            
-        Raises:
-            ValueError: If video cannot be read
-            RuntimeError: If processing fails
-            
-        Logs:
-            - INFO: Processing progress and results
-            - ERROR: Processing failures
-            - DEBUG: Detailed processing information
-        """
+        """Process complete video with metrics collection."""
         logger.info(f"Starting processing of video: {video_path}")
         start_time = time.time()
         metrics = {
@@ -195,64 +189,58 @@ class VideoProcessor:
             "processed_frames": 0,
             "total_frames": 0,
             "fps": 0,
-            "inference_time": 0
+            "inference_time": 0,
+            "total_time": 0,
         }
 
         try:
-            # Setup video capture
             cap = cv2.VideoCapture(str(video_path))
             if not cap.isOpened():
-                logger.error(f"Failed to open video: {video_path}")
                 raise ValueError(f"Failed to open video: {video_path}")
-                
+
+            # Get video properties
             total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-            fps = int(cap.get(cv2.CAP_PROP_FPS))
-            metrics["total_frames"] = total_frames
-            logger.debug(f"Video details - Frames: {total_frames}, FPS: {fps}")
-            
-            # Process first frame to get dimensions
+            input_fps = int(cap.get(cv2.CAP_PROP_FPS))
+
+            # Read and process first frame to get dimensions
             ret, frame = cap.read()
             if not ret:
-                logger.error(f"Failed to read first frame from {video_path}")
-                raise ValueError(f"Failed to read first frame from {video_path}")
-            
-            # Get output dimensions
+                raise ValueError("Failed to read first frame")
+
             test_output = self.process_frame(frame)
             h, w = test_output.shape[:2]
-            logger.debug(f"Output dimensions: {w}x{h}")
-            
-            # Setup video writer
+
+            # Initialize video writer
             output_path = self.output_dir / f"{video_path.stem}_upscaled.mp4"
             writer = cv2.VideoWriter(
-                str(output_path),
-                cv2.VideoWriter_fourcc(*'mp4v'),
-                fps,
-                (w, h)
+                str(output_path), cv2.VideoWriter_fourcc(*"mp4v"), input_fps, (w, h)
             )
-            logger.debug(f"Created output video writer: {output_path}")
 
-            # Reset video capture
+            # Reset to beginning
             cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
-            
+
             # Process all frames
             inference_start = time.time()
-            with tqdm(total=total_frames, desc=f"Processing {video_path.name}") as pbar:
+            with tqdm(total=total_frames, desc=video_path.name) as pbar:
                 while True:
                     ret, frame = cap.read()
                     if not ret:
                         break
-                        
+
                     processed = self.process_frame(frame)
                     writer.write(processed)
                     metrics["processed_frames"] += 1
                     pbar.update(1)
 
             inference_time = time.time() - inference_start
-            metrics.update({
-                "inference_time": inference_time,
-                "total_time": time.time() - start_time,
-                "fps": metrics["processed_frames"] / inference_time
-            })
+            total_time = time.time() - start_time
+            metrics.update(
+                {
+                    "inference_time": inference_time,
+                    "total_time": total_time,
+                    "fps": metrics["processed_frames"] / inference_time,
+                }
+            )
 
             logger.info(
                 f"Completed processing {video_path.name} - "
@@ -264,9 +252,9 @@ class VideoProcessor:
             logger.error(f"Error processing {video_path.name}: {str(e)}", exc_info=True)
             raise
         finally:
-            if 'cap' in locals():
+            if "cap" in locals():
                 cap.release()
-            if 'writer' in locals():
+            if "writer" in locals():
                 writer.release()
 
         self.save_metrics(metrics, video_path)
@@ -275,14 +263,14 @@ class VideoProcessor:
     def save_metrics(self, metrics: Dict[str, Any], video_path: Path) -> None:
         """
         Save processing metrics to JSON file.
-        
+
         Creates a timestamped JSON file containing all processing metrics
         and execution statistics.
-        
+
         Args:
             metrics: Collection of processing metrics
             video_path: Path to processed video
-            
+
         Logs:
             - INFO: Metrics saving status
             - DEBUG: Metrics file location
@@ -291,13 +279,134 @@ class VideoProcessor:
         try:
             metrics_dir = self.settings.output_dir / "metrics"
             metrics_dir.mkdir(exist_ok=True)
-            
-            metrics_path = metrics_dir / f"{video_path.stem}_{Path(self.model_path).stem}_metrics.json"
-            
-            with open(metrics_path, 'w') as f:
+
+            metrics_path = (
+                metrics_dir
+                / f"{video_path.stem}_{Path(self.model_path).stem}_metrics.json"
+            )
+
+            with open(metrics_path, "w") as f:
                 json.dump(metrics, f, indent=4)
-                
+
             logger.info(f"Saved processing metrics to {metrics_path}")
             logger.debug(f"Metrics content: {metrics}")
         except Exception as e:
             logger.error(f"Failed to save metrics: {str(e)}")
+
+
+class BatchMetrics:
+    """
+    Tracks and manages performance metrics for batch processing operations.
+
+    Attributes:
+        start_time (float): Batch processing start time
+        model_name (str): Name of the model being used
+        videos (List[Dict]): List of processed video results
+    """
+
+    def __init__(self, model_name: str):
+        """Initialize batch metrics tracker."""
+        self.start_time = time.time()
+        self.model_name = model_name
+        self.videos: List[Dict[str, float]] = []
+
+    def add_video_result(self, video_name: str, inference_time: float) -> None:
+        """Add processing results for a single video."""
+        self.videos.append({"name": video_name, "inference_time": inference_time})
+
+    def get_summary(self) -> Dict[str, Any]:
+        """Generate comprehensive batch processing summary."""
+        total_time = time.time() - self.start_time
+        return {
+            "model_name": self.model_name,
+            "total_videos": len(self.videos),
+            "total_batch_time": total_time,
+            "average_time_per_video": (
+                total_time / len(self.videos) if self.videos else 0
+            ),
+            "videos": self.videos,
+            "timestamp": datetime.now().isoformat(),
+        }
+
+
+def main() -> None:
+    """
+    Main entry point for OpenModelDB video processing system.
+    
+    Environment Variables:
+        UPSCALER_INPUT_DIR: Input directory path
+        UPSCALER_OUTPUT_DIR: Output directory path
+        UPSCALER_GPU_DEVICE: GPU device ID
+        UPSCALER_LOG_LEVEL: Logging level
+    """
+    try:
+        # Initialize settings with default values
+        settings = UpscalerSettings(
+            input_dir=Path("/root/pixelupbench/data/realism"),
+            models={
+                "DeH264": ModelConfig(
+                    path="Phips/1xDeH264_realplksr",
+                    tile_size=1024
+                )
+            }
+        )
+        settings.setup_logging()
+        logger.info("Starting OpenModelDB video processing")
+        
+        # Process videos with each configured model
+        for model_name, model_config in settings.models.items():
+            logger.info(f"Initializing processor with model: {model_name}")
+            processor = VideoProcessor(settings, model_config)
+            
+            # Initialize batch metrics
+            batch_metrics = BatchMetrics(model_name)
+            
+            # Process all MP4 files in input directory
+            video_files = list(settings.input_dir.glob("*.mp4"))
+            if not video_files:
+                logger.warning(f"No MP4 files found in {settings.input_dir}")
+                continue
+                
+            logger.info(f"Found {len(video_files)} videos to process")
+            
+            # Process each video
+            for video_path in video_files:
+                try:
+                    logger.info(f"Processing {video_path.name} with {model_name}")
+                    start_time = time.time()
+                    processor.process_video(video_path)
+                    inference_time = time.time() - start_time
+                    batch_metrics.add_video_result(video_path.name, inference_time)
+                except Exception as e:
+                    logger.error(f"Failed to process {video_path.name}: {str(e)}", exc_info=True)
+                    continue
+            
+            # Save batch metrics
+            metrics_dir = settings.output_dir / "metrics"
+            metrics_dir.mkdir(exist_ok=True)
+            metrics_path = metrics_dir / f"{model_name}_batch_metrics_{datetime.now():%Y%m%d_%H%M%S}.json"
+            
+            summary = batch_metrics.get_summary()
+            with open(metrics_path, 'w') as f:
+                json.dump(summary, f, indent=4)
+            
+            # Display summary
+            print(f"\nProcessing Summary for {model_name}:")
+            print(f"Total videos processed: {summary['total_videos']}")
+            print(f"Total batch time: {summary['total_batch_time']:.2f}s")
+            print(f"Average time per video: {summary['average_time_per_video']:.2f}s")
+            print("\nIndividual video times:")
+            for video in summary['videos']:
+                print(f"{video['name']}: {video['inference_time']:.2f}s")
+            
+            logger.info(f"Completed batch processing with {model_name}")
+            
+    except Exception as e:
+        logger.error("Fatal error in main processing loop", exc_info=True)
+        raise
+    finally:
+        logger.info("OpenModelDB processing completed")
+
+
+if __name__ == "__main__":
+    main()
