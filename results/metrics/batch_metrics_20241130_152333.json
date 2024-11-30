@@ -1,0 +1,21 @@
+{
+    "model_name": "RealESRGAN_x4plus_anime_6B",
+    "total_videos": 3,
+    "total_batch_time": 871.6622648239136,
+    "average_time_per_video": 290.5540882746379,
+    "videos": [
+        {
+            "name": "hxh.mp4",
+            "inference_time": 242.56354784965515
+        },
+        {
+            "name": "one_piece.mp4",
+            "inference_time": 281.3258635997772
+        },
+        {
+            "name": "dbz.mp4",
+            "inference_time": 347.76816487312317
+        }
+    ],
+    "timestamp": "2024-11-30T15:23:33.919720"
+}
