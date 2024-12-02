@@ -95,17 +95,25 @@ class BatchMetrics:
         self.num_videos: int = num_videos
         self.videos_processed: List[Dict[str, Union[str, float]]] = []
 
-    def add_video_result(self, video_name: str, inference_time: float) -> None:
+    def add_video_result(self, video_name: str, inference_time: float,
+                        original_resolution: tuple, upscaled_resolution: tuple,
+                        ssim: float) -> None:
         """
         Add processing results for a single video.
 
         Args:
             video_name: Name of the processed video file
             inference_time: Time taken to process the video in seconds
+            original_resolution: Tuple of (width, height) for input video
+            upscaled_resolution: Tuple of (width, height) for output video
+            ssim: Average Structural Similarity Index for the video
         """
         self.videos_processed.append({
             "name": video_name,
-            "inference_time": inference_time
+            "inference_time": inference_time,
+            "original_resolution": f"{original_resolution[0]}x{original_resolution[1]}",
+            "upscaled_resolution": f"{upscaled_resolution[0]}x{upscaled_resolution[1]}",
+            "ssim": round(ssim, 3)
         })
 
     def get_summary(self) -> Dict[str, Any]:
@@ -205,32 +213,38 @@ class AuraUpscaler:
             logger.error(f"Failed to load AURA-SR model: {str(e)}")
             raise
 
-    def process_video(self, video_path: Path) -> float:
+    def _calculate_ssim(self, img1: np.ndarray, img2: np.ndarray) -> float:
+        """Calculate SSIM between two frames."""
+        C1 = (0.01 * 255)**2
+        C2 = (0.03 * 255)**2
+
+        img1 = img1.astype(np.float64)
+        img2 = img2.astype(np.float64)
+        kernel = cv2.getGaussianKernel(11, 1.5)
+        window = np.outer(kernel, kernel.transpose())
+
+        mu1 = cv2.filter2D(img1, -1, window)[5:-5, 5:-5]
+        mu2 = cv2.filter2D(img2, -1, window)[5:-5, 5:-5]
+        mu1_sq = mu1**2
+        mu2_sq = mu2**2
+        mu1_mu2 = mu1 * mu2
+        sigma1_sq = cv2.filter2D(img1**2, -1, window)[5:-5, 5:-5] - mu1_sq
+        sigma2_sq = cv2.filter2D(img2**2, -1, window)[5:-5, 5:-5] - mu2_sq
+        sigma12 = cv2.filter2D(img1 * img2, -1, window)[5:-5, 5:-5] - mu1_mu2
+
+        ssim_map = ((2 * mu1_mu2 + C1) * (2 * sigma12 + C2)) / \
+                   ((mu1_sq + mu2_sq + C1) * (sigma1_sq + sigma2_sq + C2))
+        return float(ssim_map.mean())
+
+    def process_video(self, video_path: Path) -> tuple:
         """
         Process a single video through the AURA-SR upscaling pipeline.
-        
-        Performs complete video processing workflow:
-            1. Video validation and metadata extraction
-            2. Frame-by-frame upscaling with 4x resolution
-            3. Progress tracking and error handling
-            4. Output video generation with metadata preservation
         
         Args:
             video_path (Path): Path to input MP4 video file
         
         Returns:
-            float: Total processing time in seconds
-        
-        Raises:
-            ValueError: If video file is corrupt or unreadable
-            RuntimeError: If processing fails mid-video
-            Exception: For other processing errors
-        
-        Technical Details:
-            - Preserves original video FPS
-            - Converts between RGB/BGR as needed
-            - Handles PIL Image to numpy array conversion
-            - Uses MP4V codec for output
+            tuple: Contains (inference_time, original_resolution, upscaled_resolution, ssim)
         """
         start_time = time.time()
 
@@ -238,8 +252,10 @@ class AuraUpscaler:
         output_dir.mkdir(parents=True, exist_ok=True)
         output_path = output_dir / f"{video_path.stem}_output.mp4"
 
-        # Open video
+        # Open video and get original resolution
         cap = cv2.VideoCapture(str(video_path))
+        orig_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+        orig_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
         fps = int(cap.get(cv2.CAP_PROP_FPS))
         total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
 
@@ -250,31 +266,38 @@ class AuraUpscaler:
 
         # Convert test frame and get dimensions
         test_output = self.model.upscale_4x(frame)
-        # Convert PIL Image to numpy array if necessary
         if hasattr(test_output, 'convert'):
             test_output = np.array(test_output.convert('RGB'))
-        h, w = test_output.shape[:2]
+        up_height, up_width = test_output.shape[:2]
 
         # Setup video writer
         fourcc = cv2.VideoWriter_fourcc(*"mp4v")
-        writer = cv2.VideoWriter(str(output_path), fourcc, fps, (w, h))
+        writer = cv2.VideoWriter(str(output_path), fourcc, fps, (up_width, up_height))
 
         # Process video
         cap.set(cv2.CAP_PROP_POS_FRAMES, 0)  # Reset to start
+        ssim_values = []
         with tqdm(total=total_frames, desc=f"Processing {video_path.name}") as pbar:
             while True:
                 ret, frame = cap.read()
                 if not ret:
                     break
 
+                # Convert BGR to RGB before processing
+                frame_rgb = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+                
                 # Process frame and ensure numpy array format
-                upscaled_frame = self.model.upscale_4x(frame)
+                upscaled_frame = self.model.upscale_4x(frame_rgb)
                 if hasattr(upscaled_frame, 'convert'):
                     upscaled_frame = np.array(upscaled_frame.convert('RGB'))
                 
-                # OpenCV expects BGR format
-                if upscaled_frame.shape[-1] == 3:  # If RGB
-                    upscaled_frame = cv2.cvtColor(upscaled_frame, cv2.COLOR_RGB2BGR)
+                # Convert back to BGR for OpenCV
+                upscaled_frame = cv2.cvtColor(upscaled_frame, cv2.COLOR_RGB2BGR)
+                
+                # Calculate SSIM
+                frame_resized = cv2.resize(frame, (up_width, up_height))
+                ssim = self._calculate_ssim(frame_resized, upscaled_frame)
+                ssim_values.append(ssim)
                 
                 writer.write(upscaled_frame)
                 pbar.update(1)
@@ -283,7 +306,14 @@ class AuraUpscaler:
         writer.release()
 
         inference_time = time.time() - start_time
-        return inference_time
+        average_ssim = sum(ssim_values) / len(ssim_values) if ssim_values else 0.0
+
+        return (
+            inference_time,
+            (orig_width, orig_height),
+            (up_width, up_height),
+            average_ssim
+        )
 
     def process_batch(self) -> Dict[str, Any]:
         """
@@ -317,11 +347,12 @@ class AuraUpscaler:
         metrics = BatchMetrics(len(video_files))
         logger.info(f"Processing {len(video_files)} videos with AURA-SR...")
 
-        with tqdm(video_files, desc="Processing batch",ascii= " ▖▘▝▗▚▞█ ") as pbar:
+        with tqdm(video_files, desc="Processing batch", ascii=" ▖▘▝▗▚▞█ ") as pbar:
             for video_path in pbar:
                 try:
-                    inference_time = self.process_video(video_path)
-                    metrics.add_video_result(video_path.name, inference_time)
+                    inference_time, orig_res, up_res, ssim = self.process_video(video_path)
+                    metrics.add_video_result(video_path.name, inference_time,
+                                          orig_res, up_res, ssim)
                     pbar.set_postfix({"Last inference": f"{inference_time:.2f}s"})
                 except Exception as e:
                     logger.error(f"Failed to process {video_path.name}: {str(e)}")

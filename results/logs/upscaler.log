@@ -147,3 +147,61 @@
 2024-11-28 16:02:12 | INFO     | __main__:save_metrics:291 - Saved processing metrics to ../results/metrics/restore_1xDeH264_realplksr_metrics.json
 2024-11-28 16:02:12 | INFO     | __main__:main:402 - Completed batch processing with DeH264
 2024-11-28 16:02:12 | INFO     | __main__:main:408 - OpenModelDB processing completed
+2024-12-02 15:40:18 | INFO     | __main__:main:395 - Starting OpenModelDB video processing
+2024-12-02 15:40:18 | INFO     | __main__:main:399 - Initializing processor with model: DeH264
+2024-12-02 15:40:18 | INFO     | __main__:__init__:115 - Loading model: Phips/4xNomosWebPhoto_RealPLKSR
+2024-12-02 15:40:22 | INFO     | __main__:__init__:120 - Successfully loaded model Phips/4xNomosWebPhoto_RealPLKSR
+2024-12-02 15:40:22 | INFO     | __main__:main:411 - Found 4 videos to process
+2024-12-02 15:40:22 | INFO     | __main__:main:416 - Processing generated.mp4 with DeH264
+2024-12-02 15:40:22 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/generated.mp4
+2024-12-02 15:45:21 | INFO     | __main__:process_video:280 - Completed processing generated.mp4 - Time: 298.41s, SSIM: 0.722
+2024-12-02 15:45:21 | INFO     | __main__:save_metrics:326 - Saved processing metrics to ../results/metrics/generated_4xNomosWebPhoto_RealPLKSR_metrics.json
+2024-12-02 15:45:21 | INFO     | __main__:main:416 - Processing low_rel.mp4 with DeH264
+2024-12-02 15:45:21 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-12-02 15:51:48 | INFO     | __main__:process_video:280 - Completed processing low_rel.mp4 - Time: 387.52s, SSIM: 0.804
+2024-12-02 15:51:48 | INFO     | __main__:save_metrics:326 - Saved processing metrics to ../results/metrics/low_rel_4xNomosWebPhoto_RealPLKSR_metrics.json
+2024-12-02 15:51:48 | INFO     | __main__:main:416 - Processing low_res.mp4 with DeH264
+2024-12-02 15:51:48 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_res.mp4
+2024-12-02 15:58:59 | INFO     | __main__:process_video:280 - Completed processing low_res.mp4 - Time: 430.78s, SSIM: 0.894
+2024-12-02 15:58:59 | INFO     | __main__:save_metrics:326 - Saved processing metrics to ../results/metrics/low_res_4xNomosWebPhoto_RealPLKSR_metrics.json
+2024-12-02 15:58:59 | INFO     | __main__:main:416 - Processing restore.mp4 with DeH264
+2024-12-02 15:58:59 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/restore.mp4
+2024-12-02 16:07:23 | INFO     | __main__:process_video:280 - Completed processing restore.mp4 - Time: 503.67s, SSIM: 0.926
+2024-12-02 16:07:23 | INFO     | __main__:save_metrics:326 - Saved processing metrics to ../results/metrics/restore_4xNomosWebPhoto_RealPLKSR_metrics.json
+2024-12-02 16:07:23 | INFO     | __main__:main:452 - Completed batch processing with DeH264
+2024-12-02 16:07:23 | INFO     | __main__:main:458 - OpenModelDB processing completed
+2024-12-02 16:20:12 | INFO     | __main__:main:357 - Starting OpenModelDB video processing
+2024-12-02 16:20:12 | INFO     | __main__:main:361 - Initializing processor with model: DAT-2
+2024-12-02 16:20:12 | INFO     | __main__:__init__:115 - Loading model: Phips/4xRealWebPhoto_v4_dat2
+2024-12-02 16:20:19 | INFO     | __main__:__init__:120 - Successfully loaded model Phips/4xRealWebPhoto_v4_dat2
+2024-12-02 16:20:19 | INFO     | __main__:main:372 - Found 4 videos to process
+2024-12-02 16:20:19 | INFO     | __main__:main:377 - Processing generated.mp4 with DAT-2
+2024-12-02 16:20:19 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/generated.mp4
+2024-12-02 16:39:47 | INFO     | __main__:main:357 - Starting OpenModelDB video processing
+2024-12-02 16:39:47 | INFO     | __main__:main:361 - Initializing processor with model: DAT-2
+2024-12-02 16:39:47 | INFO     | __main__:__init__:115 - Loading model: Phips/4xRealWebPhoto_v4_dat2
+2024-12-02 16:39:52 | INFO     | __main__:__init__:120 - Successfully loaded model Phips/4xRealWebPhoto_v4_dat2
+2024-12-02 16:39:52 | INFO     | __main__:main:372 - Found 4 videos to process
+2024-12-02 16:39:52 | INFO     | __main__:main:377 - Processing generated.mp4 with DAT-2
+2024-12-02 16:39:52 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/generated.mp4
+2024-12-02 16:40:05 | INFO     | __main__:main:419 - OpenModelDB processing completed
+2024-12-02 16:42:12 | INFO     | __main__:main:357 - Starting OpenModelDB video processing
+2024-12-02 16:42:12 | INFO     | __main__:main:361 - Initializing processor with model: 4xLSDIRDAT
+2024-12-02 16:42:12 | INFO     | __main__:__init__:115 - Loading model: Phips/4xLSDIRDAT
+2024-12-02 16:42:30 | INFO     | __main__:__init__:120 - Successfully loaded model Phips/4xLSDIRDAT
+2024-12-02 16:42:30 | INFO     | __main__:main:372 - Found 4 videos to process
+2024-12-02 16:42:30 | INFO     | __main__:main:377 - Processing generated.mp4 with 4xLSDIRDAT
+2024-12-02 16:42:30 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/generated.mp4
+2024-12-02 16:58:48 | INFO     | __main__:process_video:279 - Completed processing generated.mp4 - Time: 2308.50s, SSIM: 0.843
+2024-12-02 16:58:48 | INFO     | __main__:main:377 - Processing low_rel.mp4 with DAT-2
+2024-12-02 16:58:48 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-12-02 17:23:47 | INFO     | __main__:main:357 - Starting OpenModelDB video processing
+2024-12-02 17:23:47 | INFO     | __main__:main:361 - Initializing processor with model: 4xLSDIRCompactR3
+2024-12-02 17:23:48 | INFO     | __main__:__init__:115 - Loading model: Phips/4xLSDIRCompactR3
+2024-12-02 17:23:48 | INFO     | __main__:__init__:120 - Successfully loaded model Phips/4xLSDIRCompactR3
+2024-12-02 17:23:48 | INFO     | __main__:main:372 - Found 4 videos to process
+2024-12-02 17:23:48 | INFO     | __main__:main:377 - Processing generated.mp4 with 4xLSDIRCompactR3
+2024-12-02 17:23:48 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/generated.mp4
+2024-12-02 17:27:40 | INFO     | __main__:process_video:279 - Completed processing generated.mp4 - Time: 231.68s, SSIM: 0.810
+2024-12-02 17:27:40 | INFO     | __main__:main:377 - Processing low_rel.mp4 with 4xLSDIRCompactR3
+2024-12-02 17:27:40 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_rel.mp4

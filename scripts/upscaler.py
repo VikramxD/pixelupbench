@@ -14,6 +14,7 @@ from pydantic_settings import BaseSettings
 from pydantic import Field
 import git
 from configs.upscaler_settings import UpscalerSettings
+from skimage.metrics import structural_similarity as ssim
 
 """
 Features:
@@ -168,6 +169,40 @@ class VideoUpscaler:
 
         return realesrgan_path
 
+    def calculate_ssim(self, original_video_path: Path, processed_video_path: Path) -> float:
+        """
+        Calculate the SSIM between the original and processed videos.
+
+        Args:
+            original_video_path: Path to the original video file
+            processed_video_path: Path to the processed video file
+
+        Returns:
+            Average SSIM value for the video
+        """
+        original_cap = cv2.VideoCapture(str(original_video_path))
+        processed_cap = cv2.VideoCapture(str(processed_video_path))
+
+        ssim_values = []
+        while True:
+            ret1, frame1 = original_cap.read()
+            ret2, frame2 = processed_cap.read()
+            if not ret1 or not ret2:
+                break
+
+            # Convert frames to grayscale
+            gray1 = cv2.cvtColor(frame1, cv2.COLOR_BGR2GRAY)
+            gray2 = cv2.cvtColor(frame2, cv2.COLOR_BGR2GRAY)
+
+            # Calculate SSIM for the current frame
+            ssim_value = ssim(gray1, gray2)
+            ssim_values.append(ssim_value)
+
+        original_cap.release()
+        processed_cap.release()
+
+        return sum(ssim_values) / len(ssim_values) if ssim_values else 0.0
+
     def process_video(self, video_path: Path) -> float:
         """
         Process a single video through the upscaling pipeline.
@@ -219,6 +254,11 @@ class VideoUpscaler:
             raise RuntimeError(f"Processing failed: {process.stderr}")
 
         inference_time = time.time() - start_time
+
+        # Calculate SSIM
+        ssim_value = self.calculate_ssim(video_path, output_path)
+        logger.info(f"SSIM for {video_path.name}: {ssim_value:.4f}")
+
         return inference_time
 
     def process_batch(self) -> Dict[str, Any]:
@@ -243,14 +283,14 @@ class VideoUpscaler:
         Note:
             Metrics are automatically saved to a JSON file in the output directory
         """
-        video_files = list(self.settings.input_dir.glob("*.mp4"))
+        video_files = list(self.settings.input_dir.glob("**/*.mp4"))
         if not video_files:
             raise ValueError(f"No MP4 files found in {self.settings.input_dir}")
 
         metrics = BatchMetrics(self.settings.model_name, len(video_files))
         logger.info(f"Processing {len(video_files)} videos...")
 
-        with tqdm(video_files, desc="Processing videos",ascii=" ▖▘▝▗▚▞█ ") as pbar:
+        with tqdm(video_files, desc="Processing videos",ascii="▖▘▝▗▚▞█ ") as pbar:
             for video_path in pbar:
                 try:
                     inference_time = self.process_video(video_path)

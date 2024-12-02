@@ -178,29 +178,53 @@ class VideoProcessor:
             logger.error(f"Frame processing failed: {str(e)}", exc_info=True)
             raise RuntimeError(f"Frame processing failed: {str(e)}")
 
+    def _calculate_ssim(self, img1: np.ndarray, img2: np.ndarray) -> float:
+        """
+        Calculate SSIM between two frames.
+        
+        Args:
+            img1: First frame
+            img2: Second frame
+            
+        Returns:
+            float: SSIM value between 0 and 1
+        """
+        C1 = (0.01 * 255)**2
+        C2 = (0.03 * 255)**2
+
+        img1 = img1.astype(np.float64)
+        img2 = img2.astype(np.float64)
+        kernel = cv2.getGaussianKernel(11, 1.5)
+        window = np.outer(kernel, kernel.transpose())
+
+        mu1 = cv2.filter2D(img1, -1, window)[5:-5, 5:-5]
+        mu2 = cv2.filter2D(img2, -1, window)[5:-5, 5:-5]
+        mu1_sq = mu1**2
+        mu2_sq = mu2**2
+        mu1_mu2 = mu1 * mu2
+        sigma1_sq = cv2.filter2D(img1**2, -1, window)[5:-5, 5:-5] - mu1_sq
+        sigma2_sq = cv2.filter2D(img2**2, -1, window)[5:-5, 5:-5] - mu2_sq
+        sigma12 = cv2.filter2D(img1 * img2, -1, window)[5:-5, 5:-5] - mu1_mu2
+
+        ssim_map = ((2 * mu1_mu2 + C1) * (2 * sigma12 + C2)) / \
+                   ((mu1_sq + mu2_sq + C1) * (sigma1_sq + sigma2_sq + C2))
+        return float(ssim_map.mean())
+
     def process_video(self, video_path: Path) -> Dict[str, Any]:
         """Process complete video with metrics collection."""
         logger.info(f"Starting processing of video: {video_path}")
         start_time = time.time()
-        metrics = {
-            "video_name": video_path.name,
-            "model_path": self.model_path,
-            "start_time": datetime.now().isoformat(),
-            "processed_frames": 0,
-            "total_frames": 0,
-            "fps": 0,
-            "inference_time": 0,
-            "total_time": 0,
-        }
-
+        
         try:
             cap = cv2.VideoCapture(str(video_path))
             if not cap.isOpened():
                 raise ValueError(f"Failed to open video: {video_path}")
 
-            # Get video properties
+            # Get original video properties
             total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
             input_fps = int(cap.get(cv2.CAP_PROP_FPS))
+            orig_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
+            orig_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
             # Read and process first frame to get dimensions
             ret, frame = cap.read()
@@ -208,19 +232,22 @@ class VideoProcessor:
                 raise ValueError("Failed to read first frame")
 
             test_output = self.process_frame(frame)
-            h, w = test_output.shape[:2]
+            up_height, up_width = test_output.shape[:2]
 
             # Initialize video writer
             output_path = self.output_dir / f"{video_path.stem}_upscaled.mp4"
             writer = cv2.VideoWriter(
-                str(output_path), cv2.VideoWriter_fourcc(*"mp4v"), input_fps, (w, h)
+                str(output_path),
+                cv2.VideoWriter_fourcc(*"mp4v"),
+                input_fps,
+                (up_width, up_height)
             )
 
             # Reset to beginning
             cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
 
-            # Process all frames
-            inference_start = time.time()
+            # Process all frames and calculate SSIM
+            ssim_values = []
             with tqdm(total=total_frames, desc=video_path.name) as pbar:
                 while True:
                     ret, frame = cap.read()
@@ -229,69 +256,39 @@ class VideoProcessor:
 
                     processed = self.process_frame(frame)
                     writer.write(processed)
-                    metrics["processed_frames"] += 1
+
+                    # Calculate SSIM
+                    frame_resized = cv2.resize(frame, (up_width, up_height))
+                    ssim = self._calculate_ssim(frame_resized, processed)
+                    ssim_values.append(ssim)
+
                     pbar.update(1)
 
-            inference_time = time.time() - inference_start
-            total_time = time.time() - start_time
-            metrics.update(
-                {
-                    "inference_time": inference_time,
-                    "total_time": total_time,
-                    "fps": metrics["processed_frames"] / inference_time,
-                }
-            )
+            inference_time = time.time() - start_time
+            average_ssim = sum(ssim_values) / len(ssim_values) if ssim_values else 0.0
+
+            metrics = {
+                "video_name": video_path.name,
+                "model_path": self.model_path,
+                "inference_time": inference_time,
+                "original_resolution": f"{orig_width}x{orig_height}",
+                "upscaled_resolution": f"{up_width}x{up_height}",
+                "ssim": round(average_ssim, 3)
+            }
 
             logger.info(
                 f"Completed processing {video_path.name} - "
-                f"FPS: {metrics['fps']:.2f}, "
-                f"Time: {metrics['total_time']:.2f}s"
+                f"Time: {inference_time:.2f}s, "
+                f"SSIM: {metrics['ssim']:.3f}"
             )
 
-        except Exception as e:
-            logger.error(f"Error processing {video_path.name}: {str(e)}", exc_info=True)
-            raise
         finally:
             if "cap" in locals():
                 cap.release()
             if "writer" in locals():
                 writer.release()
 
-        self.save_metrics(metrics, video_path)
         return metrics
-
-    def save_metrics(self, metrics: Dict[str, Any], video_path: Path) -> None:
-        """
-        Save processing metrics to JSON file.
-
-        Creates a timestamped JSON file containing all processing metrics
-        and execution statistics.
-
-        Args:
-            metrics: Collection of processing metrics
-            video_path: Path to processed video
-
-        Logs:
-            - INFO: Metrics saving status
-            - DEBUG: Metrics file location
-            - ERROR: Saving failures
-        """
-        try:
-            metrics_dir = self.settings.output_dir / "metrics"
-            metrics_dir.mkdir(exist_ok=True)
-
-            metrics_path = (
-                metrics_dir
-                / f"{video_path.stem}_{Path(self.model_path).stem}_metrics.json"
-            )
-
-            with open(metrics_path, "w") as f:
-                json.dump(metrics, f, indent=4)
-
-            logger.info(f"Saved processing metrics to {metrics_path}")
-            logger.debug(f"Metrics content: {metrics}")
-        except Exception as e:
-            logger.error(f"Failed to save metrics: {str(e)}")
 
 
 class BatchMetrics:
@@ -308,11 +305,19 @@ class BatchMetrics:
         """Initialize batch metrics tracker."""
         self.start_time = time.time()
         self.model_name = model_name
-        self.videos: List[Dict[str, float]] = []
+        self.videos: List[Dict[str, Any]] = []
 
-    def add_video_result(self, video_name: str, inference_time: float) -> None:
+    def add_video_result(self, video_name: str, inference_time: float,
+                        original_resolution: tuple, upscaled_resolution: tuple,
+                        ssim: float) -> None:
         """Add processing results for a single video."""
-        self.videos.append({"name": video_name, "inference_time": inference_time})
+        self.videos.append({
+            "name": video_name,
+            "inference_time": inference_time,
+            "original_resolution": f"{original_resolution[0]}x{original_resolution[1]}",
+            "upscaled_resolution": f"{upscaled_resolution[0]}x{upscaled_resolution[1]}",
+            "ssim": round(ssim, 3)
+        })
 
     def get_summary(self) -> Dict[str, Any]:
         """Generate comprehensive batch processing summary."""
@@ -321,9 +326,7 @@ class BatchMetrics:
             "model_name": self.model_name,
             "total_videos": len(self.videos),
             "total_batch_time": total_time,
-            "average_time_per_video": (
-                total_time / len(self.videos) if self.videos else 0
-            ),
+            "average_time_per_video": (total_time / len(self.videos) if self.videos else 0),
             "videos": self.videos,
             "timestamp": datetime.now().isoformat(),
         }
@@ -344,8 +347,8 @@ def main() -> None:
         settings = UpscalerSettings(
             input_dir=Path("/root/pixelupbench/data/realism"),
             models={
-                "DeH264": ModelConfig(
-                    path="Phips/1xDeH264_realplksr",
+                "4xLSDIRCompactR3": ModelConfig(
+                    path="Phips/4xLSDIRCompactR3",
                     tile_size=1024
                 )
             }
@@ -358,7 +361,6 @@ def main() -> None:
             logger.info(f"Initializing processor with model: {model_name}")
             processor = VideoProcessor(settings, model_config)
             
-            # Initialize batch metrics
             batch_metrics = BatchMetrics(model_name)
             
             # Process all MP4 files in input directory
@@ -374,14 +376,20 @@ def main() -> None:
                 try:
                     logger.info(f"Processing {video_path.name} with {model_name}")
                     start_time = time.time()
-                    processor.process_video(video_path)
+                    metrics = processor.process_video(video_path)
                     inference_time = time.time() - start_time
-                    batch_metrics.add_video_result(video_path.name, inference_time)
+                    batch_metrics.add_video_result(
+                        video_path.name,
+                        inference_time,
+                        tuple(map(int, metrics["original_resolution"].split("x"))),
+                        tuple(map(int, metrics["upscaled_resolution"].split("x"))),
+                        metrics["ssim"]
+                    )
                 except Exception as e:
                     logger.error(f"Failed to process {video_path.name}: {str(e)}", exc_info=True)
                     continue
             
-            # Save batch metrics
+            # Save only batch metrics
             metrics_dir = settings.output_dir / "metrics"
             metrics_dir.mkdir(exist_ok=True)
             metrics_path = metrics_dir / f"{model_name}_batch_metrics_{datetime.now():%Y%m%d_%H%M%S}.json"
@@ -395,9 +403,12 @@ def main() -> None:
             print(f"Total videos processed: {summary['total_videos']}")
             print(f"Total batch time: {summary['total_batch_time']:.2f}s")
             print(f"Average time per video: {summary['average_time_per_video']:.2f}s")
-            print("\nIndividual video times:")
+            print("\nIndividual video results:")
             for video in summary['videos']:
-                print(f"{video['name']}: {video['inference_time']:.2f}s")
+                print(f"{video['name']}:")
+                print(f"  Resolution: {video['original_resolution']} → {video['upscaled_resolution']}")
+                print(f"  SSIM: {video['ssim']:.3f}")
+                print(f"  Time: {video['inference_time']:.2f}s")
             
             logger.info(f"Completed batch processing with {model_name}")
             

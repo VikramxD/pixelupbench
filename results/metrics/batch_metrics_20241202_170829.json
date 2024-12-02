@@ -1,0 +1,25 @@
+{
+    "model_name": "RealESRGAN_x4plus",
+    "total_videos": 4,
+    "total_batch_time": 1857.0504994392395,
+    "average_time_per_video": 464.2626248598099,
+    "videos": [
+        {
+            "name": "generated.mp4",
+            "inference_time": 380.3318693637848
+        },
+        {
+            "name": "low_rel.mp4",
+            "inference_time": 623.3094153404236
+        },
+        {
+            "name": "low_res.mp4",
+            "inference_time": 509.7458655834198
+        },
+        {
+            "name": "restore.mp4",
+            "inference_time": 343.472012758255
+        }
+    ],
+    "timestamp": "2024-12-02T17:08:29.935375"
+}

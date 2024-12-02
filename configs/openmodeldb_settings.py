@@ -48,6 +48,8 @@ VALID_MODELS = {
     "Phips/4xNomos8k_atd_jpg",
     "Phips/4xNomosWebPhoto_atd",
     "Phips/4xRealWebPhoto_v4_dat2",
+    "Phips/4xLSDIRDAT",
+    "Phips/4xLSDIRCompactR3"
 }
 
 
@@ -148,8 +150,8 @@ class UpscalerSettings(BaseSettings):
     log_level: str = Field(default="INFO", description="Logging level")
     models: Dict[str, ModelConfig] = Field(
         default={
-            "4xNomosWebPhoto_RealPLKSR": ModelConfig(
-                path="Phips/4xNomosWebPhoto_RealPLKSR"
+            "4xLSDIRDAT": ModelConfig(
+                path="Phips/4xLSDIRDAT"
             )
         }
     )

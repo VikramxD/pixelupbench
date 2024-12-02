@@ -1,0 +1,37 @@
+{
+    "model_name": "AURA-SR",
+    "total_videos": 4,
+    "total_batch_time": 3167.4632999897003,
+    "average_time_per_video": 791.8658249974251,
+    "videos": [
+        {
+            "name": "generated.mp4",
+            "inference_time": 655.9900352954865,
+            "original_resolution": "704x480",
+            "upscaled_resolution": "2816x1920",
+            "ssim": 0.79
+        },
+        {
+            "name": "low_rel.mp4",
+            "inference_time": 946.8054649829865,
+            "original_resolution": "640x360",
+            "upscaled_resolution": "2560x1440",
+            "ssim": 0.92
+        },
+        {
+            "name": "low_res.mp4",
+            "inference_time": 816.5752303600311,
+            "original_resolution": "360x640",
+            "upscaled_resolution": "1440x2560",
+            "ssim": 0.967
+        },
+        {
+            "name": "restore.mp4",
+            "inference_time": 748.0876204967499,
+            "original_resolution": "480x360",
+            "upscaled_resolution": "1920x1440",
+            "ssim": 0.962
+        }
+    ],
+    "timestamp": "2024-12-02T14:40:11.886704"
+}
