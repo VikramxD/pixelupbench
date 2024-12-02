@@ -205,3 +205,12 @@
 2024-12-02 17:27:40 | INFO     | __main__:process_video:279 - Completed processing generated.mp4 - Time: 231.68s, SSIM: 0.810
 2024-12-02 17:27:40 | INFO     | __main__:main:377 - Processing low_rel.mp4 with 4xLSDIRCompactR3
 2024-12-02 17:27:40 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-12-02 17:33:12 | INFO     | __main__:process_video:279 - Completed processing low_rel.mp4 - Time: 332.57s, SSIM: 0.771
+2024-12-02 17:33:12 | INFO     | __main__:main:377 - Processing low_res.mp4 with 4xLSDIRCompactR3
+2024-12-02 17:33:12 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_res.mp4
+2024-12-02 17:37:59 | INFO     | __main__:process_video:279 - Completed processing low_res.mp4 - Time: 286.88s, SSIM: 0.927
+2024-12-02 17:37:59 | INFO     | __main__:main:377 - Processing restore.mp4 with 4xLSDIRCompactR3
+2024-12-02 17:37:59 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/restore.mp4
+2024-12-02 17:42:17 | INFO     | __main__:process_video:279 - Completed processing restore.mp4 - Time: 257.55s, SSIM: 0.960
+2024-12-02 17:42:17 | INFO     | __main__:main:413 - Completed batch processing with 4xLSDIRCompactR3
+2024-12-02 17:42:17 | INFO     | __main__:main:419 - OpenModelDB processing completed
