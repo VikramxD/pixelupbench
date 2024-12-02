@@ -214,3 +214,10 @@
 2024-12-02 17:42:17 | INFO     | __main__:process_video:279 - Completed processing restore.mp4 - Time: 257.55s, SSIM: 0.960
 2024-12-02 17:42:17 | INFO     | __main__:main:413 - Completed batch processing with 4xLSDIRCompactR3
 2024-12-02 17:42:17 | INFO     | __main__:main:419 - OpenModelDB processing completed
+2024-12-02 17:52:23 | INFO     | __main__:main:357 - Starting OpenModelDB video processing
+2024-12-02 17:52:23 | INFO     | __main__:main:361 - Initializing processor with model: 4xNomos8kSCHAT-L
+2024-12-02 17:52:23 | INFO     | __main__:__init__:115 - Loading model: Phips/4xNomos8kSCHAT-L
+2024-12-02 17:52:33 | INFO     | __main__:__init__:120 - Successfully loaded model Phips/4xNomos8kSCHAT-L
+2024-12-02 17:52:33 | INFO     | __main__:main:372 - Found 4 videos to process
+2024-12-02 17:52:33 | INFO     | __main__:main:377 - Processing generated.mp4 with 4xNomos8kSCHAT-L
+2024-12-02 17:52:33 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/generated.mp4

@@ -49,7 +49,8 @@ VALID_MODELS = {
     "Phips/4xNomosWebPhoto_atd",
     "Phips/4xRealWebPhoto_v4_dat2",
     "Phips/4xLSDIRDAT",
-    "Phips/4xLSDIRCompactR3"
+    "Phips/4xLSDIRCompactR3",
+    "Phips/4xNomos8kSCHAT-L"
 }
 
 

@@ -347,8 +347,8 @@ def main() -> None:
         settings = UpscalerSettings(
             input_dir=Path("/root/pixelupbench/data/realism"),
             models={
-                "4xLSDIRCompactR3": ModelConfig(
-                    path="Phips/4xLSDIRCompactR3",
+                "4xNomos8kSCHAT-L": ModelConfig(
+                    path= "Phips/4xNomos8kSCHAT-L",
                     tile_size=1024
                 )
             }
