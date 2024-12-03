@@ -75,7 +75,7 @@ class VideoProcessor:
     Example:
         >>> settings = UpscalerSettings(input_dir=Path("videos"))
         >>> model_config = ModelConfig(
-        ...     path="Phips/4xNomosWebPhoto_RealPLKSR",
+        ...     path="Phips/4xHFA2kLUDVAESwinIR_light",
         ...     tile_size=1024
         ... )
         >>> processor = VideoProcessor(settings, model_config)
@@ -347,8 +347,8 @@ def main() -> None:
         settings = UpscalerSettings(
             input_dir=Path("/root/pixelupbench/data/realism"),
             models={
-                "4xNomos2_otf_esrgan": ModelConfig(
-                    path= "Phips/4xNomos2_otf_esrgan",
+                "4xHFA2kLUDVAESwinIR_light": ModelConfig(
+                    path= "Phips/4xHFA2kLUDVAESwinIR_light",
                     tile_size=1024
                 )
             }

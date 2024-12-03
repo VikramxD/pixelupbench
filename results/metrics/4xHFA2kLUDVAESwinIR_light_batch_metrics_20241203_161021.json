@@ -1,0 +1,37 @@
+{
+    "model_name": "4xHFA2kLUDVAESwinIR_light",
+    "total_videos": 4,
+    "total_batch_time": 3647.3571338653564,
+    "average_time_per_video": 911.8392834663391,
+    "videos": [
+        {
+            "name": "generated.mp4",
+            "inference_time": 735.6380400657654,
+            "original_resolution": "704x480",
+            "upscaled_resolution": "2816x1920",
+            "ssim": 0.766
+        },
+        {
+            "name": "low_rel.mp4",
+            "inference_time": 1047.3533835411072,
+            "original_resolution": "640x360",
+            "upscaled_resolution": "2560x1440",
+            "ssim": 0.841
+        },
+        {
+            "name": "low_res.mp4",
+            "inference_time": 960.5601704120636,
+            "original_resolution": "360x640",
+            "upscaled_resolution": "1440x2560",
+            "ssim": 0.866
+        },
+        {
+            "name": "restore.mp4",
+            "inference_time": 903.8041045665741,
+            "original_resolution": "480x360",
+            "upscaled_resolution": "1920x1440",
+            "ssim": 0.889
+        }
+    ],
+    "timestamp": "2024-12-03T16:10:21.258785"
+}
