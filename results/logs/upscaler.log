@@ -245,3 +245,6 @@
 2024-12-03 13:16:34 | INFO     | __main__:process_video:279 - Completed processing low_res.mp4 - Time: 3575.46s, SSIM: 0.918
 2024-12-03 13:16:34 | INFO     | __main__:main:377 - Processing restore.mp4 with 4xNomos2_hq_atd
 2024-12-03 13:16:34 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/restore.mp4
+2024-12-03 13:51:25 | INFO     | __main__:process_video:279 - Completed processing restore.mp4 - Time: 2090.10s, SSIM: 0.977
+2024-12-03 13:51:25 | INFO     | __main__:main:413 - Completed batch processing with 4xNomos2_hq_atd
+2024-12-03 13:51:25 | INFO     | __main__:main:419 - OpenModelDB processing completed

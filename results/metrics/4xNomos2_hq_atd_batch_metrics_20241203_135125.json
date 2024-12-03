@@ -1,0 +1,37 @@
+{
+    "model_name": "4xNomos2_hq_atd",
+    "total_videos": 4,
+    "total_batch_time": 9331.451800107956,
+    "average_time_per_video": 2332.862950026989,
+    "videos": [
+        {
+            "name": "generated.mp4",
+            "inference_time": 1574.5864465236664,
+            "original_resolution": "704x480",
+            "upscaled_resolution": "2816x1920",
+            "ssim": 0.817
+        },
+        {
+            "name": "low_rel.mp4",
+            "inference_time": 2091.3011796474457,
+            "original_resolution": "640x360",
+            "upscaled_resolution": "2560x1440",
+            "ssim": 0.915
+        },
+        {
+            "name": "low_res.mp4",
+            "inference_time": 3575.462154150009,
+            "original_resolution": "360x640",
+            "upscaled_resolution": "1440x2560",
+            "ssim": 0.918
+        },
+        {
+            "name": "restore.mp4",
+            "inference_time": 2090.1004490852356,
+            "original_resolution": "480x360",
+            "upscaled_resolution": "1920x1440",
+            "ssim": 0.977
+        }
+    ],
+    "timestamp": "2024-12-03T13:51:25.060446"
+}
