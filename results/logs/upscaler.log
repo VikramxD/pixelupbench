@@ -229,3 +229,16 @@
 2024-12-02 18:14:53 | INFO     | __main__:main:372 - Found 4 videos to process
 2024-12-02 18:14:53 | INFO     | __main__:main:377 - Processing generated.mp4 with 4xNomos8kSCHAT-S
 2024-12-02 18:14:53 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/generated.mp4
+2024-12-03 11:15:47 | INFO     | __main__:main:357 - Starting OpenModelDB video processing
+2024-12-03 11:15:47 | INFO     | __main__:main:361 - Initializing processor with model: 4xNomos2_hq_atd
+2024-12-03 11:15:47 | INFO     | __main__:__init__:115 - Loading model: Phips/4xNomos2_hq_atd
+2024-12-03 11:15:53 | INFO     | __main__:__init__:120 - Successfully loaded model Phips/4xNomos2_hq_atd
+2024-12-03 11:15:53 | INFO     | __main__:main:372 - Found 4 videos to process
+2024-12-03 11:15:53 | INFO     | __main__:main:377 - Processing generated.mp4 with 4xNomos2_hq_atd
+2024-12-03 11:15:53 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/generated.mp4
+2024-12-03 11:42:08 | INFO     | __main__:process_video:279 - Completed processing generated.mp4 - Time: 1574.58s, SSIM: 0.817
+2024-12-03 11:42:08 | INFO     | __main__:main:377 - Processing low_rel.mp4 with 4xNomos2_hq_atd
+2024-12-03 11:42:08 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-12-03 12:16:59 | INFO     | __main__:process_video:279 - Completed processing low_rel.mp4 - Time: 2091.30s, SSIM: 0.915
+2024-12-03 12:16:59 | INFO     | __main__:main:377 - Processing low_res.mp4 with 4xNomos2_hq_atd
+2024-12-03 12:16:59 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_res.mp4
