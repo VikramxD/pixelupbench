@@ -51,7 +51,8 @@ VALID_MODELS = {
     "Phips/4xLSDIRDAT",
     "Phips/4xLSDIRCompactR3",
     "Phips/4xNomos8kSCHAT-S",
-    "Phips/4xNomos2_hq_atd"
+    "Phips/4xNomos2_hq_atd",
+    "Phips/4xNomos2_otf_esrgan",
 }
 
 

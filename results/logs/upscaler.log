@@ -248,3 +248,22 @@
 2024-12-03 13:51:25 | INFO     | __main__:process_video:279 - Completed processing restore.mp4 - Time: 2090.10s, SSIM: 0.977
 2024-12-03 13:51:25 | INFO     | __main__:main:413 - Completed batch processing with 4xNomos2_hq_atd
 2024-12-03 13:51:25 | INFO     | __main__:main:419 - OpenModelDB processing completed
+2024-12-03 14:06:12 | INFO     | __main__:main:357 - Starting OpenModelDB video processing
+2024-12-03 14:06:12 | INFO     | __main__:main:361 - Initializing processor with model: 4xNomos2_otf_esrgan
+2024-12-03 14:06:12 | INFO     | __main__:__init__:115 - Loading model: Phips/4xNomos2_otf_esrgan
+2024-12-03 14:06:14 | INFO     | __main__:__init__:120 - Successfully loaded model Phips/4xNomos2_otf_esrgan
+2024-12-03 14:06:14 | INFO     | __main__:main:372 - Found 4 videos to process
+2024-12-03 14:06:14 | INFO     | __main__:main:377 - Processing generated.mp4 with 4xNomos2_otf_esrgan
+2024-12-03 14:06:14 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/generated.mp4
+2024-12-03 14:16:42 | INFO     | __main__:process_video:279 - Completed processing generated.mp4 - Time: 627.62s, SSIM: 0.779
+2024-12-03 14:16:42 | INFO     | __main__:main:377 - Processing low_rel.mp4 with 4xNomos2_otf_esrgan
+2024-12-03 14:16:42 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-12-03 14:31:16 | INFO     | __main__:process_video:279 - Completed processing low_rel.mp4 - Time: 874.51s, SSIM: 0.818
+2024-12-03 14:31:16 | INFO     | __main__:main:377 - Processing low_res.mp4 with 4xNomos2_otf_esrgan
+2024-12-03 14:31:16 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_res.mp4
+2024-12-03 14:44:05 | INFO     | __main__:process_video:279 - Completed processing low_res.mp4 - Time: 768.43s, SSIM: 0.927
+2024-12-03 14:44:05 | INFO     | __main__:main:377 - Processing restore.mp4 with 4xNomos2_otf_esrgan
+2024-12-03 14:44:05 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/restore.mp4
+2024-12-03 14:53:10 | INFO     | __main__:process_video:279 - Completed processing restore.mp4 - Time: 545.68s, SSIM: 0.953
+2024-12-03 14:53:10 | INFO     | __main__:main:413 - Completed batch processing with 4xNomos2_otf_esrgan
+2024-12-03 14:53:10 | INFO     | __main__:main:419 - OpenModelDB processing completed

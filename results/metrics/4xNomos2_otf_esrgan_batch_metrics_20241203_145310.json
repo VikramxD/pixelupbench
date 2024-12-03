@@ -1,0 +1,37 @@
+{
+    "model_name": "4xNomos2_otf_esrgan",
+    "total_videos": 4,
+    "total_batch_time": 2816.250408411026,
+    "average_time_per_video": 704.0626021027565,
+    "videos": [
+        {
+            "name": "generated.mp4",
+            "inference_time": 627.6203451156616,
+            "original_resolution": "704x480",
+            "upscaled_resolution": "2816x1920",
+            "ssim": 0.779
+        },
+        {
+            "name": "low_rel.mp4",
+            "inference_time": 874.5150752067566,
+            "original_resolution": "640x360",
+            "upscaled_resolution": "2560x1440",
+            "ssim": 0.818
+        },
+        {
+            "name": "low_res.mp4",
+            "inference_time": 768.4343247413635,
+            "original_resolution": "360x640",
+            "upscaled_resolution": "1440x2560",
+            "ssim": 0.927
+        },
+        {
+            "name": "restore.mp4",
+            "inference_time": 545.679449558258,
+            "original_resolution": "480x360",
+            "upscaled_resolution": "1920x1440",
+            "ssim": 0.953
+        }
+    ],
+    "timestamp": "2024-12-03T14:53:10.855155"
+}
