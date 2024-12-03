@@ -1,0 +1,37 @@
+{
+    "model_name": "Swin2SR",
+    "total_videos": 4,
+    "total_batch_time": 3883.2872953414917,
+    "average_time_per_video": 970.8218238353729,
+    "videos": [
+        {
+            "name": "generated.mp4",
+            "inference_time": 812.0519251823425,
+            "original_resolution": "704x480",
+            "upscaled_resolution": "1424x976",
+            "ssim": 0.672
+        },
+        {
+            "name": "low_rel.mp4",
+            "inference_time": 1198.0985140800476,
+            "original_resolution": "640x360",
+            "upscaled_resolution": "1296x736",
+            "ssim": 0.487
+        },
+        {
+            "name": "low_res.mp4",
+            "inference_time": 1047.092425107956,
+            "original_resolution": "360x640",
+            "upscaled_resolution": "736x1296",
+            "ssim": 0.786
+        },
+        {
+            "name": "restore.mp4",
+            "inference_time": 826.031845331192,
+            "original_resolution": "480x360",
+            "upscaled_resolution": "976x736",
+            "ssim": 0.9
+        }
+    ],
+    "timestamp": "2024-12-03T13:28:14.324531"
+}
