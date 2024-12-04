@@ -70,15 +70,22 @@ class BatchMetrics:
         self.num_videos: int = num_videos
         self.videos_processed: List[Dict[str, Union[str, float]]] = []
 
-    def add_video_result(self, video_name: str, inference_time: float) -> None:
+    def add_video_result(self, video_name: str, inference_time: float, original_fps: float, model_fps: float) -> None:
         """
         Add processing results for a single video.
 
         Args:
             video_name: Name of the processed video file
             inference_time: Time taken to process the video in seconds
+            original_fps: Original video frame rate
+            model_fps: Raw model inference speed (frames/second)
         """
-        self.videos_processed.append({"name": video_name, "inference_time": inference_time})
+        self.videos_processed.append({
+            "name": video_name,
+            "inference_time": inference_time,
+            "original_fps": original_fps,
+            "model_fps": model_fps
+        })
 
     def get_summary(self) -> Dict[str, Any]:
         """
@@ -203,27 +210,26 @@ class VideoUpscaler:
 
         return sum(ssim_values) / len(ssim_values) if ssim_values else 0.0
 
-    def process_video(self, video_path: Path) -> float:
+    def process_video(self, video_path: Path) -> tuple[float, float, float]:
         """
         Process a single video through the upscaling pipeline.
-
-        Handles the complete processing of one video including:
-        1. Output path setup
-        2. Model configuration
-        3. Video processing
-        4. Error handling
 
         Args:
             video_path: Path to the input video file
 
         Returns:
-            Total inference time in seconds
-
-        Raises:
-            RuntimeError: If video processing fails
-            subprocess.CalledProcessError: If subprocess execution fails
+            Tuple of (inference_time, original_fps, model_fps)
         """
         start_time = time.time()
+
+        # Get input video information
+        cap = cv2.VideoCapture(str(video_path))
+        total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
+        original_fps = cap.get(cv2.CAP_PROP_FPS)
+        cap.release()
+
+        # Start model inference timing
+        model_start_time = time.time()
 
         output_dir = self.settings.output_dir / self.settings.model_name
         output_dir.mkdir(parents=True, exist_ok=True)
@@ -253,13 +259,20 @@ class VideoUpscaler:
         if process.returncode != 0:
             raise RuntimeError(f"Processing failed: {process.stderr}")
 
+        model_time = time.time() - model_start_time
         inference_time = time.time() - start_time
+
+        # Calculate model FPS
+        model_fps = total_frames / model_time  # Raw model inference speed
 
         # Calculate SSIM
         ssim_value = self.calculate_ssim(video_path, output_path)
-        logger.info(f"SSIM for {video_path.name}: {ssim_value:.4f}")
+        logger.info(f"Video: {video_path.name}")
+        logger.info(f"Original FPS: {original_fps:.2f}")
+        logger.info(f"Model FPS: {model_fps:.2f}")
+        logger.info(f"SSIM: {ssim_value:.4f}")
 
-        return inference_time
+        return inference_time, original_fps, model_fps
 
     def process_batch(self) -> Dict[str, Any]:
         """
@@ -290,12 +303,20 @@ class VideoUpscaler:
         metrics = BatchMetrics(self.settings.model_name, len(video_files))
         logger.info(f"Processing {len(video_files)} videos...")
 
-        with tqdm(video_files, desc="Processing videos",ascii="▖▘▝▗▚▞█ ") as pbar:
+        with tqdm(video_files, desc="Processing videos", ascii="▖▘▝▗▚▞█ ") as pbar:
             for video_path in pbar:
                 try:
-                    inference_time = self.process_video(video_path)
-                    metrics.add_video_result(video_path.name, inference_time)
-                    pbar.set_postfix({"Last inference": f"{inference_time:.2f}s"})
+                    inference_time, original_fps, model_fps = self.process_video(video_path)
+                    metrics.add_video_result(
+                        video_path.name, 
+                        inference_time, 
+                        original_fps,
+                        model_fps
+                    )
+                    pbar.set_postfix({
+                        "Time": f"{inference_time:.2f}s",
+                        "Model FPS": f"{model_fps:.2f}"
+                    })
                 except Exception as e:
                     logger.error(f"Failed to process {video_path.name}: {str(e)}")
 
@@ -325,9 +346,12 @@ def main():
         print(f"Total videos processed: {summary['total_videos']}")
         print(f"Total batch time: {summary['total_batch_time']:.2f}s")
         print(f"Average time per video: {summary['average_time_per_video']:.2f}s")
-        print("\nIndividual video times:")
+        print("\nIndividual video results:")
         for video in summary["videos"]:
-            print(f"{video['name']}: {video['inference_time']:.2f}s")
+            print(f"{video['name']}:")
+            print(f"  Time: {video['inference_time']:.2f}s")
+            print(f"  Original FPS: {video['original_fps']:.2f}")
+            print(f"  Model FPS: {video['model_fps']:.2f}")
 
     except Exception as e:
         logger.error(f"Batch processing failed: {str(e)}")

@@ -6,8 +6,8 @@ from pathlib import Path
 class UpscalerSettings(BaseSettings):
     """Configuration settings for batch video upscaling."""
 
-    input_dir: Path = Field(Path('/root/pixelupbench/data/realism'),description="Directory containing input videos")
-    output_dir: Path = Field(default=Path("../results"), description="Base directory for outputs")
+    input_dir: Path = Field(Path('/root/pixelupbench/test'),description="Directory containing input videos")
+    output_dir: Path = Field(default=Path("../test_results"), description="Base directory for outputs")
     model_name: str = Field(default="RealESRGAN_x4plus", description="Model name")
     scale_factor: int = Field(default=4)
     tile_size: int = Field(default=0)
