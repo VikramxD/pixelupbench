@@ -1,0 +1,15 @@
+{
+    "model_name": "realesr-animevideov3",
+    "total_videos": 1,
+    "total_batch_time": 68.7930212020874,
+    "average_time_per_video": 68.7930212020874,
+    "videos": [
+        {
+            "name": "test_anime.mp4",
+            "inference_time": 68.75650000572205,
+            "original_fps": 30.0,
+            "model_fps": 4.363876956301087
+        }
+    ],
+    "timestamp": "2024-12-04T18:55:25.008468"
+}

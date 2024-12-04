@@ -1,0 +1,21 @@
+{
+    "model_name": "RealESRGAN_x4plus_anime_6B",
+    "total_videos": 2,
+    "total_batch_time": 236.62706017494202,
+    "average_time_per_video": 118.31353008747101,
+    "videos": [
+        {
+            "name": "test_real.mp4",
+            "inference_time": 116.40603804588318,
+            "original_fps": 30.0,
+            "model_fps": 2.5774901522001477
+        },
+        {
+            "name": "test_anime.mp4",
+            "inference_time": 120.17417120933533,
+            "original_fps": 30.0,
+            "model_fps": 2.496593013602154
+        }
+    ],
+    "timestamp": "2024-12-04T18:46:38.833848"
+}

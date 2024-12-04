@@ -148,7 +148,7 @@ class UpscalerSettings(BaseSettings):
 
     input_dir: Path = Field(..., description="Directory containing input videos")
     output_dir: Path = Field(
-        default=Path("../results"), description="Base directory for outputs"
+        default=Path("../test_results"), description="Base directory for outputs"
     )
     gpu_device: int = Field(default=0, description="GPU device ID")
     log_level: str = Field(default="INFO", description="Logging level")

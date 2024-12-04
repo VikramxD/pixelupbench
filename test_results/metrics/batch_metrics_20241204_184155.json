@@ -1,0 +1,8 @@
+{
+    "model_name": "RealESRGAN AnimeVideo-v3",
+    "total_videos": 2,
+    "total_batch_time": 5.61225962638855,
+    "average_time_per_video": 2.806129813194275,
+    "videos": [],
+    "timestamp": "2024-12-04T18:41:55.117891"
+}

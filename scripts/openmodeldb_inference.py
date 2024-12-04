@@ -231,6 +231,8 @@ class VideoProcessor:
             if not ret:
                 raise ValueError("Failed to read first frame")
 
+            # Start model inference timing
+            model_start_time = time.time()
             test_output = self.process_frame(frame)
             up_height, up_width = test_output.shape[:2]
 
@@ -264,8 +266,10 @@ class VideoProcessor:
 
                     pbar.update(1)
 
+            model_time = time.time() - model_start_time
             inference_time = time.time() - start_time
             average_ssim = sum(ssim_values) / len(ssim_values) if ssim_values else 0.0
+            model_fps = total_frames / model_time  # Raw model inference speed
 
             metrics = {
                 "video_name": video_path.name,
@@ -273,12 +277,16 @@ class VideoProcessor:
                 "inference_time": inference_time,
                 "original_resolution": f"{orig_width}x{orig_height}",
                 "upscaled_resolution": f"{up_width}x{up_height}",
+                "original_fps": input_fps,
+                "model_fps": round(model_fps, 2),
                 "ssim": round(average_ssim, 3)
             }
 
             logger.info(
                 f"Completed processing {video_path.name} - "
                 f"Time: {inference_time:.2f}s, "
+                f"Original FPS: {input_fps}, "
+                f"Model FPS: {model_fps:.2f}, "
                 f"SSIM: {metrics['ssim']:.3f}"
             )
 
@@ -345,7 +353,7 @@ def main() -> None:
     try:
         # Initialize settings with default values
         settings = UpscalerSettings(
-            input_dir=Path("/root/pixelupbench/data/realism"),
+            input_dir=Path("/root/pixelupbench/test/test-real/"),
             models={
                 "4xHFA2kLUDVAESwinIR_light": ModelConfig(
                     path= "Phips/4xHFA2kLUDVAESwinIR_light",

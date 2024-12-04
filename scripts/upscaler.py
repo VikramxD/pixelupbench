@@ -210,7 +210,7 @@ class VideoUpscaler:
 
         return sum(ssim_values) / len(ssim_values) if ssim_values else 0.0
 
-    def process_video(self, video_path: Path) -> tuple[float, float, float]:
+    def process_video(self, video_path: Path) -> tuple[float, float, float, float]:
         """
         Process a single video through the upscaling pipeline.
 
@@ -218,7 +218,7 @@ class VideoUpscaler:
             video_path: Path to the input video file
 
         Returns:
-            Tuple of (inference_time, original_fps, model_fps)
+            Tuple of (inference_time, original_fps, model_fps, ssim_value)
         """
         start_time = time.time()
 
@@ -231,6 +231,7 @@ class VideoUpscaler:
         # Start model inference timing
         model_start_time = time.time()
 
+        # Create output directory structure
         output_dir = self.settings.output_dir / self.settings.model_name
         output_dir.mkdir(parents=True, exist_ok=True)
         output_path = output_dir / f"{video_path.stem}_output.mp4"
@@ -272,7 +273,7 @@ class VideoUpscaler:
         logger.info(f"Model FPS: {model_fps:.2f}")
         logger.info(f"SSIM: {ssim_value:.4f}")
 
-        return inference_time, original_fps, model_fps
+        return inference_time, original_fps, model_fps, ssim_value
 
     def process_batch(self) -> Dict[str, Any]:
         """
@@ -306,7 +307,7 @@ class VideoUpscaler:
         with tqdm(video_files, desc="Processing videos", ascii="▖▘▝▗▚▞█ ") as pbar:
             for video_path in pbar:
                 try:
-                    inference_time, original_fps, model_fps = self.process_video(video_path)
+                    inference_time, original_fps, model_fps, ssim_value = self.process_video(video_path)
                     metrics.add_video_result(
                         video_path.name, 
                         inference_time, 

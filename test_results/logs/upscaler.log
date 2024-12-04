@@ -1,0 +1,10 @@
+2024-12-04 19:05:42 | INFO     | __main__:main:365 - Starting OpenModelDB video processing
+2024-12-04 19:05:42 | INFO     | __main__:main:369 - Initializing processor with model: 4xHFA2kLUDVAESwinIR_light
+2024-12-04 19:05:42 | INFO     | __main__:__init__:115 - Loading model: Phips/4xHFA2kLUDVAESwinIR_light
+2024-12-04 19:05:43 | INFO     | __main__:__init__:120 - Successfully loaded model Phips/4xHFA2kLUDVAESwinIR_light
+2024-12-04 19:05:43 | INFO     | __main__:main:380 - Found 1 videos to process
+2024-12-04 19:05:43 | INFO     | __main__:main:385 - Processing test_real.mp4 with 4xHFA2kLUDVAESwinIR_light
+2024-12-04 19:05:43 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/test/test-real/test_real.mp4
+2024-12-04 19:29:46 | INFO     | __main__:process_video:285 - Completed processing test_real.mp4 - Time: 1443.71s, Original FPS: 30, Model FPS: 0.21, SSIM: 0.786
+2024-12-04 19:29:46 | INFO     | __main__:main:421 - Completed batch processing with 4xHFA2kLUDVAESwinIR_light
+2024-12-04 19:29:46 | INFO     | __main__:main:427 - OpenModelDB processing completed

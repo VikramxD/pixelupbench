@@ -286,3 +286,11 @@
 2024-12-03 16:10:21 | INFO     | __main__:process_video:279 - Completed processing restore.mp4 - Time: 903.80s, SSIM: 0.889
 2024-12-03 16:10:21 | INFO     | __main__:main:413 - Completed batch processing with 4xHFA2kLUDVAESwinIR_light
 2024-12-03 16:10:21 | INFO     | __main__:main:419 - OpenModelDB processing completed
+2024-12-04 19:03:15 | INFO     | __main__:main:365 - Starting OpenModelDB video processing
+2024-12-04 19:03:15 | INFO     | __main__:main:369 - Initializing processor with model: 4xHFA2kLUDVAESwinIR_light
+2024-12-04 19:03:15 | INFO     | __main__:__init__:115 - Loading model: Phips/4xHFA2kLUDVAESwinIR_light
+2024-12-04 19:03:16 | INFO     | __main__:__init__:120 - Successfully loaded model Phips/4xHFA2kLUDVAESwinIR_light
+2024-12-04 19:03:16 | INFO     | __main__:main:380 - Found 5 videos to process
+2024-12-04 19:03:16 | INFO     | __main__:main:385 - Processing generated.mp4 with 4xHFA2kLUDVAESwinIR_light
+2024-12-04 19:03:16 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/generated.mp4
+2024-12-04 19:03:26 | INFO     | __main__:main:427 - OpenModelDB processing completed
