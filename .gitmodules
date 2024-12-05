@@ -1,0 +1,3 @@
+[submodule "APISR"]
+	path = APISR
+	url = https://github.com/Kiteretsu77/APISR
