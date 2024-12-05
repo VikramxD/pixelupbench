@@ -17,7 +17,7 @@ Technical Specifications:
     - Output: Upscaled MP4 videos with configurable scale factor
     - GPU Memory: Usage based on tile size configuration
     - Processing: Frame-by-frame with tiled inference
-    - Metrics: FPS, timing, and resource utilization
+    - Metrics: FPS, timing, and resource utilization,input and upscaled resolution
 
 Dependencies:
     - torch>=1.7.0
@@ -222,7 +222,7 @@ class VideoProcessor:
 
             # Get original video properties
             total_frames = int(cap.get(cv2.CAP_PROP_FRAME_COUNT))
-            input_fps = int(cap.get(cv2.CAP_PROP_FPS))
+            input_fps = cap.get(cv2.CAP_PROP_FPS)
             orig_width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
             orig_height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
 
@@ -270,24 +270,30 @@ class VideoProcessor:
             inference_time = time.time() - start_time
             average_ssim = sum(ssim_values) / len(ssim_values) if ssim_values else 0.0
             model_fps = total_frames / model_time  # Raw model inference speed
+            effective_fps = total_frames / inference_time  # Overall processing speed
 
             metrics = {
                 "video_name": video_path.name,
                 "model_path": self.model_path,
-                "inference_time": inference_time,
+                "inference_time": round(inference_time, 2),
                 "original_resolution": f"{orig_width}x{orig_height}",
                 "upscaled_resolution": f"{up_width}x{up_height}",
-                "original_fps": input_fps,
+                "input_fps": round(input_fps, 2),
                 "model_fps": round(model_fps, 2),
+                "effective_fps": round(effective_fps, 2),
                 "ssim": round(average_ssim, 3)
             }
 
             logger.info(
                 f"Completed processing {video_path.name} - "
                 f"Time: {inference_time:.2f}s, "
-                f"Original FPS: {input_fps}, "
+                f"Input FPS: {input_fps:.2f}, "
                 f"Model FPS: {model_fps:.2f}, "
-                f"SSIM: {metrics['ssim']:.3f}"
+                f"Effective FPS: {effective_fps:.2f}, "
+                f"SSIM: {metrics['ssim']:.3f}",
+                f"original_resoluton : {metrics['original_resolution']}",
+                f"upscaled_resolution:{metrics['upscaled_resolution']}",
+
             )
 
         finally:
@@ -317,14 +323,16 @@ class BatchMetrics:
 
     def add_video_result(self, video_name: str, inference_time: float,
                         original_resolution: tuple, upscaled_resolution: tuple,
-                        ssim: float) -> None:
+                        ssim: float, input_fps: float, model_fps: float) -> None:
         """Add processing results for a single video."""
         self.videos.append({
             "name": video_name,
             "inference_time": inference_time,
             "original_resolution": f"{original_resolution[0]}x{original_resolution[1]}",
             "upscaled_resolution": f"{upscaled_resolution[0]}x{upscaled_resolution[1]}",
-            "ssim": round(ssim, 3)
+            "ssim": round(ssim, 3),
+            "input_fps": round(input_fps, 2),
+            "model_fps": round(model_fps, 2)
         })
 
     def get_summary(self) -> Dict[str, Any]:
@@ -337,6 +345,7 @@ class BatchMetrics:
             "average_time_per_video": (total_time / len(self.videos) if self.videos else 0),
             "videos": self.videos,
             "timestamp": datetime.now().isoformat(),
+            
         }
 
 
@@ -353,10 +362,10 @@ def main() -> None:
     try:
         # Initialize settings with default values
         settings = UpscalerSettings(
-            input_dir=Path("/root/pixelupbench/test/test-real/"),
+            input_dir=Path("/root/pixelupbench/test/test-real"),
             models={
-                "4xHFA2kLUDVAESwinIR_light": ModelConfig(
-                    path= "Phips/4xHFA2kLUDVAESwinIR_light",
+                "2xHFA2kOmniSR": ModelConfig(
+                    path= "Phips/2xHFA2kOmniSR",
                     tile_size=1024
                 )
             }
@@ -391,7 +400,9 @@ def main() -> None:
                         inference_time,
                         tuple(map(int, metrics["original_resolution"].split("x"))),
                         tuple(map(int, metrics["upscaled_resolution"].split("x"))),
-                        metrics["ssim"]
+                        metrics["ssim"],
+                        metrics["input_fps"],
+                        metrics["model_fps"]
                     )
                 except Exception as e:
                     logger.error(f"Failed to process {video_path.name}: {str(e)}", exc_info=True)

@@ -1,0 +1,18 @@
+{
+    "model_name": "2xHFA2kOmniSR",
+    "total_videos": 1,
+    "total_batch_time": 185.42279934883118,
+    "average_time_per_video": 185.42279934883118,
+    "videos": [
+        {
+            "name": "test_real.mp4",
+            "inference_time": 185.4219651222229,
+            "original_resolution": "682x360",
+            "upscaled_resolution": "1364x720",
+            "ssim": 0.899,
+            "input_fps": 30.0,
+            "model_fps": 1.62
+        }
+    ],
+    "timestamp": "2024-12-05T07:52:00.427406"
+}

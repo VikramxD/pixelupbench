@@ -1,0 +1,18 @@
+{
+    "model_name": "4xNomosWebPhoto_RealPLKSR",
+    "total_videos": 1,
+    "total_batch_time": 503.31308817863464,
+    "average_time_per_video": 503.31308817863464,
+    "videos": [
+        {
+            "name": "test_real.mp4",
+            "inference_time": 503.3123128414154,
+            "original_resolution": "682x360",
+            "upscaled_resolution": "2728x1440",
+            "ssim": 0.681,
+            "input_fps": 30.0,
+            "model_fps": 0.6
+        }
+    ],
+    "timestamp": "2024-12-05T06:49:28.474089"
+}
