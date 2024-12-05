@@ -1,0 +1,27 @@
+{
+    "model_name": "realesr-animevideov3",
+    "total_videos": 3,
+    "total_batch_time": 430.09506487846375,
+    "average_time_per_video": 143.36502162615457,
+    "videos": [
+        {
+            "name": "dbz.mp4",
+            "inference_time": 188.92373323440552,
+            "original_fps": 23.976023976023978,
+            "model_fps": 5.9286123971035725
+        },
+        {
+            "name": "hxh.mp4",
+            "inference_time": 107.21516132354736,
+            "original_fps": 30.0,
+            "model_fps": 7.03316359674419
+        },
+        {
+            "name": "one_piece.mp4",
+            "inference_time": 133.903977394104,
+            "original_fps": 29.97002997002997,
+            "model_fps": 6.803762323421662
+        }
+    ],
+    "timestamp": "2024-12-05T10:32:12.519807"
+}
