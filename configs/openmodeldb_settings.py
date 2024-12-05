@@ -53,7 +53,13 @@ VALID_MODELS = {
     "Phips/4xNomos8kSCHAT-S",
     "Phips/4xNomos2_hq_atd",
     "Phips/4xNomos2_otf_esrgan",
-    "Phips/4xHFA2kLUDVAESwinIR_light"
+    "Phips/4xHFA2kLUDVAESwinIR_light",
+    "Phips/2xNomosUni_esrgan_multijpg",
+    "Phips/2xNomosUni_span_multijpg",
+    "Phips/2xHFA2kReal-CUGAN",
+    "Phips/2xHFA2k_LUDVAE_compact",
+    "Phips/2xHFA2kReal-CUGAN",
+
 }
 
 

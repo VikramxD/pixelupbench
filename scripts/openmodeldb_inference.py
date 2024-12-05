@@ -362,10 +362,10 @@ def main() -> None:
     try:
         # Initialize settings with default values
         settings = UpscalerSettings(
-            input_dir=Path("/root/pixelupbench/test/test-real"),
+            input_dir=Path("/root/pixelupbench/data/realism/"),
             models={
-                "2xHFA2kOmniSR": ModelConfig(
-                    path= "Phips/2xHFA2kOmniSR",
+                "2xHFA2kCompact": ModelConfig(
+                    path= "Phips/2xHFA2kCompact",
                     tile_size=1024
                 )
             }

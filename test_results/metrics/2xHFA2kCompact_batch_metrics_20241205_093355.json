@@ -1,0 +1,54 @@
+{
+    "model_name": "2xHFA2kCompact",
+    "total_videos": 5,
+    "total_batch_time": 386.0249047279358,
+    "average_time_per_video": 77.20498094558715,
+    "videos": [
+        {
+            "name": "generated.mp4",
+            "inference_time": 61.810473918914795,
+            "original_resolution": "704x480",
+            "upscaled_resolution": "1408x960",
+            "ssim": 0.904,
+            "input_fps": 25.0,
+            "model_fps": 1.96
+        },
+        {
+            "name": "input.mp4",
+            "inference_time": 101.31997680664062,
+            "original_resolution": "640x338",
+            "upscaled_resolution": "1280x676",
+            "ssim": 0.856,
+            "input_fps": 23.98,
+            "model_fps": 2.97
+        },
+        {
+            "name": "low_rel.mp4",
+            "inference_time": 87.47721552848816,
+            "original_resolution": "640x360",
+            "upscaled_resolution": "1280x720",
+            "ssim": 0.878,
+            "input_fps": 25.0,
+            "model_fps": 2.89
+        },
+        {
+            "name": "low_res.mp4",
+            "inference_time": 72.49475073814392,
+            "original_resolution": "360x640",
+            "upscaled_resolution": "720x1280",
+            "ssim": 0.922,
+            "input_fps": 25.0,
+            "model_fps": 3.04
+        },
+        {
+            "name": "restore.mp4",
+            "inference_time": 62.9208619594574,
+            "original_resolution": "480x360",
+            "upscaled_resolution": "960x720",
+            "ssim": 0.955,
+            "input_fps": 18.0,
+            "model_fps": 4.1
+        }
+    ],
+    "timestamp": "2024-12-05T09:33:55.283275"
+}

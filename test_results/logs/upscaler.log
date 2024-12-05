@@ -108,3 +108,113 @@
 2024-12-05 08:00:12 | INFO     | __main__:main:378 - Initializing processor with model: 2xHFA2kOmniSR
 2024-12-05 08:00:12 | INFO     | __main__:__init__:115 - Loading model: Phips/2xHFA2kOmniSR
 2024-12-05 08:00:13 | INFO     | __main__:main:438 - OpenModelDB processing completed
+2024-12-05 08:26:17 | INFO     | __main__:main:374 - Starting OpenModelDB video processing
+2024-12-05 08:26:17 | INFO     | __main__:main:378 - Initializing processor with model: 2xHFA2kReal-CUGAN
+2024-12-05 08:26:18 | INFO     | __main__:__init__:115 - Loading model: Phips/2xHFA2kReal-CUGAN
+2024-12-05 08:26:18 | INFO     | __main__:__init__:120 - Successfully loaded model Phips/2xHFA2kReal-CUGAN
+2024-12-05 08:26:18 | INFO     | __main__:main:389 - Found 5 videos to process
+2024-12-05 08:26:18 | INFO     | __main__:main:394 - Processing generated.mp4 with 2xHFA2kReal-CUGAN
+2024-12-05 08:26:18 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/generated.mp4
+2024-12-05 08:27:21 | INFO     | __main__:process_video:287 - Completed processing generated.mp4 - Time: 62.44s, Input FPS: 25.00, Model FPS: 1.94, Effective FPS: 1.94, SSIM: 0.925
+2024-12-05 08:27:21 | INFO     | __main__:main:394 - Processing input.mp4 with 2xHFA2kReal-CUGAN
+2024-12-05 08:27:21 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/input.mp4
+2024-12-05 08:29:07 | INFO     | __main__:process_video:287 - Completed processing input.mp4 - Time: 106.39s, Input FPS: 23.98, Model FPS: 2.83, Effective FPS: 2.83, SSIM: 0.744
+2024-12-05 08:29:07 | INFO     | __main__:main:394 - Processing low_rel.mp4 with 2xHFA2kReal-CUGAN
+2024-12-05 08:29:07 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-12-05 08:30:45 | INFO     | __main__:process_video:287 - Completed processing low_rel.mp4 - Time: 98.06s, Input FPS: 25.00, Model FPS: 2.58, Effective FPS: 2.58, SSIM: 0.941
+2024-12-05 08:30:45 | INFO     | __main__:main:394 - Processing low_res.mp4 with 2xHFA2kReal-CUGAN
+2024-12-05 08:30:45 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_res.mp4
+2024-12-05 08:32:05 | INFO     | __main__:process_video:287 - Completed processing low_res.mp4 - Time: 79.64s, Input FPS: 25.00, Model FPS: 2.76, Effective FPS: 2.76, SSIM: 0.953
+2024-12-05 08:32:05 | INFO     | __main__:main:394 - Processing restore.mp4 with 2xHFA2kReal-CUGAN
+2024-12-05 08:32:05 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/restore.mp4
+2024-12-05 08:33:14 | INFO     | __main__:process_video:287 - Completed processing restore.mp4 - Time: 69.03s, Input FPS: 18.00, Model FPS: 3.74, Effective FPS: 3.74, SSIM: 0.970
+2024-12-05 08:33:14 | INFO     | __main__:main:432 - Completed batch processing with 2xHFA2kReal-CUGAN
+2024-12-05 08:33:14 | INFO     | __main__:main:438 - OpenModelDB processing completed
+2024-12-05 08:36:42 | INFO     | __main__:main:374 - Starting OpenModelDB video processing
+2024-12-05 08:36:42 | INFO     | __main__:main:378 - Initializing processor with model: 2xHFA2k_LUDVAE_compact
+2024-12-05 08:36:43 | INFO     | __main__:__init__:115 - Loading model: Phips/2xHFA2k_LUDVAE_compact
+2024-12-05 08:36:43 | INFO     | __main__:__init__:120 - Successfully loaded model Phips/2xHFA2k_LUDVAE_compact
+2024-12-05 08:36:43 | INFO     | __main__:main:389 - Found 5 videos to process
+2024-12-05 08:36:43 | INFO     | __main__:main:394 - Processing generated.mp4 with 2xHFA2k_LUDVAE_compact
+2024-12-05 08:36:43 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/generated.mp4
+2024-12-05 08:37:44 | INFO     | __main__:process_video:287 - Completed processing generated.mp4 - Time: 60.22s, Input FPS: 25.00, Model FPS: 2.01, Effective FPS: 2.01, SSIM: 0.882
+2024-12-05 08:37:44 | INFO     | __main__:main:394 - Processing input.mp4 with 2xHFA2k_LUDVAE_compact
+2024-12-05 08:37:44 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/input.mp4
+2024-12-05 08:39:24 | INFO     | __main__:process_video:287 - Completed processing input.mp4 - Time: 100.46s, Input FPS: 23.98, Model FPS: 3.00, Effective FPS: 3.00, SSIM: 0.834
+2024-12-05 08:39:24 | INFO     | __main__:main:394 - Processing low_rel.mp4 with 2xHFA2k_LUDVAE_compact
+2024-12-05 08:39:24 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-12-05 08:40:54 | INFO     | __main__:process_video:287 - Completed processing low_rel.mp4 - Time: 90.22s, Input FPS: 25.00, Model FPS: 2.80, Effective FPS: 2.80, SSIM: 0.911
+2024-12-05 08:40:54 | INFO     | __main__:main:394 - Processing low_res.mp4 with 2xHFA2k_LUDVAE_compact
+2024-12-05 08:40:54 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_res.mp4
+2024-12-05 08:42:14 | INFO     | __main__:process_video:287 - Completed processing low_res.mp4 - Time: 79.79s, Input FPS: 25.00, Model FPS: 2.76, Effective FPS: 2.76, SSIM: 0.913
+2024-12-05 08:42:14 | INFO     | __main__:main:394 - Processing restore.mp4 with 2xHFA2k_LUDVAE_compact
+2024-12-05 08:42:14 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/restore.mp4
+2024-12-05 08:43:24 | INFO     | __main__:process_video:287 - Completed processing restore.mp4 - Time: 69.58s, Input FPS: 18.00, Model FPS: 3.71, Effective FPS: 3.71, SSIM: 0.966
+2024-12-05 08:43:24 | INFO     | __main__:main:432 - Completed batch processing with 2xHFA2k_LUDVAE_compact
+2024-12-05 08:43:24 | INFO     | __main__:main:438 - OpenModelDB processing completed
+2024-12-05 08:58:00 | INFO     | __main__:main:374 - Starting OpenModelDB video processing
+2024-12-05 08:58:00 | INFO     | __main__:main:378 - Initializing processor with model: 2xNomosUni_esrgan_multijpg
+2024-12-05 08:58:00 | INFO     | __main__:__init__:115 - Loading model: Phips/2xNomosUni_esrgan_multijpg
+2024-12-05 08:58:02 | INFO     | __main__:__init__:120 - Successfully loaded model Phips/2xNomosUni_esrgan_multijpg
+2024-12-05 08:58:02 | INFO     | __main__:main:389 - Found 5 videos to process
+2024-12-05 08:58:02 | INFO     | __main__:main:394 - Processing generated.mp4 with 2xNomosUni_esrgan_multijpg
+2024-12-05 08:58:02 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/generated.mp4
+2024-12-05 08:59:28 | INFO     | __main__:process_video:287 - Completed processing generated.mp4 - Time: 85.90s, Input FPS: 25.00, Model FPS: 1.41, Effective FPS: 1.41, SSIM: 0.920
+2024-12-05 08:59:28 | INFO     | __main__:main:394 - Processing input.mp4 with 2xNomosUni_esrgan_multijpg
+2024-12-05 08:59:28 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/input.mp4
+2024-12-05 09:01:50 | INFO     | __main__:process_video:287 - Completed processing input.mp4 - Time: 141.76s, Input FPS: 23.98, Model FPS: 2.12, Effective FPS: 2.12, SSIM: 0.877
+2024-12-05 09:01:50 | INFO     | __main__:main:394 - Processing low_rel.mp4 with 2xNomosUni_esrgan_multijpg
+2024-12-05 09:01:50 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-12-05 09:03:53 | INFO     | __main__:process_video:287 - Completed processing low_rel.mp4 - Time: 123.36s, Input FPS: 25.00, Model FPS: 2.05, Effective FPS: 2.05, SSIM: 0.944
+2024-12-05 09:03:53 | INFO     | __main__:main:394 - Processing low_res.mp4 with 2xNomosUni_esrgan_multijpg
+2024-12-05 09:03:53 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_res.mp4
+2024-12-05 09:05:38 | INFO     | __main__:process_video:287 - Completed processing low_res.mp4 - Time: 105.08s, Input FPS: 25.00, Model FPS: 2.09, Effective FPS: 2.09, SSIM: 0.979
+2024-12-05 09:05:38 | INFO     | __main__:main:394 - Processing restore.mp4 with 2xNomosUni_esrgan_multijpg
+2024-12-05 09:05:38 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/restore.mp4
+2024-12-05 09:07:11 | INFO     | __main__:process_video:287 - Completed processing restore.mp4 - Time: 93.23s, Input FPS: 18.00, Model FPS: 2.77, Effective FPS: 2.77, SSIM: 0.985
+2024-12-05 09:07:11 | INFO     | __main__:main:432 - Completed batch processing with 2xNomosUni_esrgan_multijpg
+2024-12-05 09:07:11 | INFO     | __main__:main:438 - OpenModelDB processing completed
+2024-12-05 09:13:39 | INFO     | __main__:main:374 - Starting OpenModelDB video processing
+2024-12-05 09:13:39 | INFO     | __main__:main:378 - Initializing processor with model: 2xNomosUni_span_multijpg
+2024-12-05 09:13:39 | INFO     | __main__:__init__:115 - Loading model: Phips/2xNomosUni_span_multijpg
+2024-12-05 09:13:40 | INFO     | __main__:__init__:120 - Successfully loaded model Phips/2xNomosUni_span_multijpg
+2024-12-05 09:13:40 | INFO     | __main__:main:389 - Found 5 videos to process
+2024-12-05 09:13:40 | INFO     | __main__:main:394 - Processing generated.mp4 with 2xNomosUni_span_multijpg
+2024-12-05 09:13:40 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/generated.mp4
+2024-12-05 09:14:39 | INFO     | __main__:process_video:287 - Completed processing generated.mp4 - Time: 59.03s, Input FPS: 25.00, Model FPS: 2.05, Effective FPS: 2.05, SSIM: 0.933
+2024-12-05 09:14:39 | INFO     | __main__:main:394 - Processing input.mp4 with 2xNomosUni_span_multijpg
+2024-12-05 09:14:39 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/input.mp4
+2024-12-05 09:16:23 | INFO     | __main__:process_video:287 - Completed processing input.mp4 - Time: 104.12s, Input FPS: 23.98, Model FPS: 2.89, Effective FPS: 2.89, SSIM: 0.909
+2024-12-05 09:16:23 | INFO     | __main__:main:394 - Processing low_rel.mp4 with 2xNomosUni_span_multijpg
+2024-12-05 09:16:23 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-12-05 09:17:54 | INFO     | __main__:process_video:287 - Completed processing low_rel.mp4 - Time: 91.35s, Input FPS: 25.00, Model FPS: 2.77, Effective FPS: 2.77, SSIM: 0.948
+2024-12-05 09:17:54 | INFO     | __main__:main:394 - Processing low_res.mp4 with 2xNomosUni_span_multijpg
+2024-12-05 09:17:54 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_res.mp4
+2024-12-05 09:19:15 | INFO     | __main__:process_video:287 - Completed processing low_res.mp4 - Time: 80.75s, Input FPS: 25.00, Model FPS: 2.72, Effective FPS: 2.72, SSIM: 0.973
+2024-12-05 09:19:15 | INFO     | __main__:main:394 - Processing restore.mp4 with 2xNomosUni_span_multijpg
+2024-12-05 09:19:15 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/restore.mp4
+2024-12-05 09:20:27 | INFO     | __main__:process_video:287 - Completed processing restore.mp4 - Time: 71.82s, Input FPS: 18.00, Model FPS: 3.59, Effective FPS: 3.59, SSIM: 0.974
+2024-12-05 09:20:27 | INFO     | __main__:main:432 - Completed batch processing with 2xNomosUni_span_multijpg
+2024-12-05 09:20:27 | INFO     | __main__:main:438 - OpenModelDB processing completed
+2024-12-05 09:27:28 | INFO     | __main__:main:374 - Starting OpenModelDB video processing
+2024-12-05 09:27:28 | INFO     | __main__:main:378 - Initializing processor with model: 2xHFA2kCompact
+2024-12-05 09:27:28 | INFO     | __main__:__init__:115 - Loading model: Phips/2xHFA2kCompact
+2024-12-05 09:27:29 | INFO     | __main__:__init__:120 - Successfully loaded model Phips/2xHFA2kCompact
+2024-12-05 09:27:29 | INFO     | __main__:main:389 - Found 5 videos to process
+2024-12-05 09:27:29 | INFO     | __main__:main:394 - Processing generated.mp4 with 2xHFA2kCompact
+2024-12-05 09:27:29 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/generated.mp4
+2024-12-05 09:28:31 | INFO     | __main__:process_video:287 - Completed processing generated.mp4 - Time: 61.81s, Input FPS: 25.00, Model FPS: 1.96, Effective FPS: 1.96, SSIM: 0.904
+2024-12-05 09:28:31 | INFO     | __main__:main:394 - Processing input.mp4 with 2xHFA2kCompact
+2024-12-05 09:28:31 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/input.mp4
+2024-12-05 09:30:12 | INFO     | __main__:process_video:287 - Completed processing input.mp4 - Time: 101.32s, Input FPS: 23.98, Model FPS: 2.97, Effective FPS: 2.97, SSIM: 0.856
+2024-12-05 09:30:12 | INFO     | __main__:main:394 - Processing low_rel.mp4 with 2xHFA2kCompact
+2024-12-05 09:30:12 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_rel.mp4
+2024-12-05 09:31:39 | INFO     | __main__:process_video:287 - Completed processing low_rel.mp4 - Time: 87.47s, Input FPS: 25.00, Model FPS: 2.89, Effective FPS: 2.89, SSIM: 0.878
+2024-12-05 09:31:39 | INFO     | __main__:main:394 - Processing low_res.mp4 with 2xHFA2kCompact
+2024-12-05 09:31:39 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/low_res.mp4
+2024-12-05 09:32:52 | INFO     | __main__:process_video:287 - Completed processing low_res.mp4 - Time: 72.45s, Input FPS: 25.00, Model FPS: 3.04, Effective FPS: 3.04, SSIM: 0.922
+2024-12-05 09:32:52 | INFO     | __main__:main:394 - Processing restore.mp4 with 2xHFA2kCompact
+2024-12-05 09:32:52 | INFO     | __main__:process_video:215 - Starting processing of video: /root/pixelupbench/data/realism/restore.mp4
+2024-12-05 09:33:55 | INFO     | __main__:process_video:287 - Completed processing restore.mp4 - Time: 62.92s, Input FPS: 18.00, Model FPS: 4.10, Effective FPS: 4.10, SSIM: 0.955
+2024-12-05 09:33:55 | INFO     | __main__:main:432 - Completed batch processing with 2xHFA2kCompact
+2024-12-05 09:33:55 | INFO     | __main__:main:438 - OpenModelDB processing completed
