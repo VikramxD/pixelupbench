@@ -6,15 +6,15 @@ import datetime, pytz
 import torch
 import numpy as np
 from torchvision.utils import save_image
-from pydantic import BaseSettings
+from pydantic_settings import BaseSettings
 from typing import List
 import json
 
 # Import files from the local folder
 root_path = os.path.abspath('.')
 sys.path.append(root_path)
-from APISR.test_code.inference import super_resolve_video
-from APISR.test_code.test_utils import load_grl, load_rrdb, load_dat
+from apisr.test_code.inference import super_resolve_video
+from apisr.test_code.test_utils import load_grl, load_rrdb, load_dat
 
 
 class Config(BaseSettings):

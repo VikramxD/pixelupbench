@@ -27,7 +27,7 @@ build-backend = "setuptools.build_meta"
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["scripts*", "configs*"]
+include = ["scripts*", "configs*","apisr"]
 exclude = ["tests*"]
 
 [tool.setuptools.package-data]
