@@ -80,7 +80,7 @@ class Config(BaseSettings):
     input_directory: str = "/root/pixelupbench/data/anime"
     output_directory: str = "../results"
     metrics_directory: str = "../results/metrics"
-    selected_model: str = "4xGRL"  # Default model
+    selected_model: str = "2xRRDB"  # Default model
     available_models: dict = {
         "4xGRL": {
             "weight_file": "4x_APISR_GRL_GAN_generator.pth",

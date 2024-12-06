@@ -1,0 +1,36 @@
+{
+    "model_name": "2xRRDB",
+    "total_videos": 3,
+    "total_batch_time": 1011.0971810817719,
+    "average_time_per_video": 337.03239369392395,
+    "videos": [
+        {
+            "name": "dbz.mp4",
+            "inference_time": 399.6159870624542,
+            "original_resolution": "640x342",
+            "upscaled_resolution": "1280x684",
+            "input_fps": 23.98,
+            "model_fps": 2.81,
+            "ssim": 0.369
+        },
+        {
+            "name": "hxh.mp4",
+            "inference_time": 282.48928594589233,
+            "original_resolution": "640x360",
+            "upscaled_resolution": "1280x720",
+            "input_fps": 30.0,
+            "model_fps": 2.67,
+            "ssim": 0.812
+        },
+        {
+            "name": "one_piece.mp4",
+            "inference_time": 322.24297642707825,
+            "original_resolution": "640x360",
+            "upscaled_resolution": "1280x720",
+            "input_fps": 29.97,
+            "model_fps": 2.83,
+            "ssim": 0.911
+        }
+    ],
+    "timestamp": "2024-12-06T19:01:39.531394"
+}
