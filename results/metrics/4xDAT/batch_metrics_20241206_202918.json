@@ -1,0 +1,27 @@
+{
+    "model_name": "4xDAT",
+    "total_videos": 2,
+    "total_batch_time": 16218.145921945572,
+    "average_time_per_video": 8109.072960972786,
+    "videos": [
+        {
+            "name": "dbz.mp4",
+            "inference_time": 5965.736883401871,
+            "original_resolution": "640x342",
+            "upscaled_resolution": "2560x1368",
+            "input_fps": 23.98,
+            "model_fps": 0.19,
+            "ssim": 0.457
+        },
+        {
+            "name": "one_piece.mp4",
+            "inference_time": 5248.276740074158,
+            "original_resolution": "640x360",
+            "upscaled_resolution": "2560x1440",
+            "input_fps": 29.97,
+            "model_fps": 0.17,
+            "ssim": 0.899
+        }
+    ],
+    "timestamp": "2024-12-06T20:29:18.545590"
+}
