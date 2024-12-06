@@ -80,7 +80,7 @@ class Config(BaseSettings):
     input_directory: str = "/root/pixelupbench/data/anime"
     output_directory: str = "../results"
     metrics_directory: str = "../results/metrics"
-    selected_model: str = "4xRRDB"  # Default model
+    selected_model: str = "4xGRL"  # Default model
     available_models: dict = {
         "4xGRL": {
             "weight_file": "4x_APISR_GRL_GAN_generator.pth",
@@ -186,58 +186,54 @@ def calculate_ssim(img1: np.ndarray, img2: np.ndarray) -> float:
 
 def calculate_video_ssim(input_path: str, output_path: str, scale: int) -> float:
     """
-    Calculates average SSIM between input and upscaled video frames.
-
-    Processes each frame pair, handling resolution differences by resizing
-    the input frames to match the output resolution.
-
+    Calculate SSIM between input and output videos using their middle frames.
+    
     Args:
-        input_path (str): Path to input video file
-        output_path (str): Path to upscaled video file
-        scale (int): Upscaling factor used
-
+        input_path (str): Path to input video
+        output_path (str): Path to upscaled video
+        scale (int): Upscaling factor
+        
     Returns:
-        float: Average SSIM value across all frames
-
-    Technical Details:
-        - Resizes input frames using cubic interpolation
-        - Processes all frames sequentially
-        - Returns 0.0 if video processing fails
+        float: SSIM value between middle frames
     """
     input_cap = cv2.VideoCapture(input_path)
     output_cap = cv2.VideoCapture(output_path)
     
-    ssim_values = []
+    # Get total frames
+    total_frames = int(input_cap.get(cv2.CAP_PROP_FRAME_COUNT))
+    middle_frame = total_frames // 2
     
-    while True:
-        input_ret, input_frame = input_cap.read()
-        output_ret, output_frame = output_cap.read()
-        
-        if not input_ret or not output_ret:
-            break
-            
-        # Resize input frame to match output dimensions for comparison
-        input_frame_resized = cv2.resize(
-            input_frame, 
-            (output_frame.shape[1], output_frame.shape[0]), 
-            interpolation=cv2.INTER_CUBIC
-        )
-        
-        ssim = calculate_ssim(input_frame_resized, output_frame)
-        ssim_values.append(ssim)
+    # Set both captures to middle frame
+    input_cap.set(cv2.CAP_PROP_POS_FRAMES, middle_frame)
+    output_cap.set(cv2.CAP_PROP_POS_FRAMES, middle_frame)
+    
+    # Read middle frames
+    input_ret, input_frame = input_cap.read()
+    output_ret, output_frame = output_cap.read()
     
     input_cap.release()
     output_cap.release()
     
-    return sum(ssim_values) / len(ssim_values) if ssim_values else 0.0
+    if not input_ret or not output_ret:
+        logger.error("Failed to read frames for SSIM calculation")
+        return 0.0
+        
+    # Resize input frame to match output dimensions
+    input_frame_resized = cv2.resize(
+        input_frame, 
+        (output_frame.shape[1], output_frame.shape[0]), 
+        interpolation=cv2.INTER_CUBIC
+    )
+    
+    # Calculate SSIM for middle frame
+    ssim = calculate_ssim(input_frame_resized, output_frame)
+    
+    return ssim
 
 
 def inference(video_path: str, model_name: str) -> tuple[str, dict]:
     """
     Performs video upscaling inference using the specified model.
-
-    Handles the complete inference pipeline including model loading,
-    video processing, and metrics calculation.
 
     Args:
         video_path (str): Path to input video file
@@ -246,26 +242,11 @@ def inference(video_path: str, model_name: str) -> tuple[str, dict]:
     Returns:
         tuple[str, dict]: Tuple containing:
             - str: Path to output video file
-            - dict: Processing metrics including:
-                - processing_time (float): Total processing time in seconds
-                - model_fps (float): Frames processed per second
-                - input_fps (float): Original video frame rate
-                - ssim (float): Average SSIM quality metric
-                - scale (int): Upscaling factor used
-
-    Raises:
-        ValueError: If model_name is not supported
-        RuntimeError: If video processing fails
-
-    Technical Details:
-        - Automatically downloads model weights if needed
-        - Creates model-specific output directories
-        - Handles GPU memory management
-        - Calculates comprehensive quality metrics
+            - dict: Processing metrics (without SSIM, which is calculated later)
     """
     try:
         if model_name not in config.available_models:
-            raise ValueError(f"Unsupported model: {model_name}. Available models: {list(config.available_models.keys())}")
+            raise ValueError(f"Unsupported model: {model_name}")
 
         model_info = config.available_models[model_name]
         weight_path = os.path.join(config.weights_directory, model_info["weight_file"])
@@ -281,7 +262,7 @@ def inference(video_path: str, model_name: str) -> tuple[str, dict]:
 
         start_time = time.time()
 
-        # Load model based on type
+        # Load model and process video
         if model_name == "4xGRL":
             generator = load_grl(weight_path, scale=scale)
         elif model_name in ["4xRRDB", "2xRRDB"]:
@@ -300,16 +281,13 @@ def inference(video_path: str, model_name: str) -> tuple[str, dict]:
             f"output_{time.time()}.mp4"
         )
 
-        # Process video
+        # Process video without SSIM calculation
         super_resolve_video(generator, video_path, output_video_path, 
                           weight_dtype=weight_dtype,
                           downsample_threshold=config.max_video_size, 
                           crop_for_4x=True, scale=scale)
 
-        # Calculate SSIM after processing
-        ssim = calculate_video_ssim(video_path, output_video_path, scale)
-
-        # Calculate processing metrics
+        # Calculate processing metrics (without SSIM)
         processing_time = time.time() - start_time
         model_fps = total_frames / processing_time
 
@@ -317,7 +295,6 @@ def inference(video_path: str, model_name: str) -> tuple[str, dict]:
             "processing_time": round(processing_time, 2),
             "model_fps": round(model_fps, 2),
             "input_fps": round(input_fps, 2),
-            "ssim": round(ssim, 3),
             "scale": scale
         }
 
@@ -329,70 +306,43 @@ def inference(video_path: str, model_name: str) -> tuple[str, dict]:
 
 
 class BatchMetrics:
-    """
-    Manages and tracks metrics for batch video processing operations.
-
-    This class handles the collection and organization of processing metrics
-    for multiple videos, providing summary statistics and export capabilities.
-
-    Attributes:
-        start_time (float): Batch processing start timestamp
-        model_name (str): Name of model being used
-        videos (list): List of processed video results
-
-    Technical Details:
-        - Tracks per-video metrics including resolution and SSIM
-        - Calculates batch-level statistics
-        - Provides JSON-compatible data structure
-    """
+    """Tracks and manages performance metrics for batch processing operations."""
     def __init__(self, model_name: str):
         self.start_time = time.time()
         self.model_name = model_name
         self.videos = []
+        self.pending_ssim_calculations = []
 
     def add_video_result(self, video_name: str, inference_time: float,
                         input_frame: tuple, output_frame: tuple,
-                        ssim: float) -> None:
-        """
-        Adds processing results for a single video to the batch metrics.
-
-        Args:
-            video_name (str): Name of processed video file
-            inference_time (float): Processing time in seconds
-            input_frame (tuple): Original resolution (width, height)
-            output_frame (tuple): Upscaled resolution (width, height)
-            ssim (float): SSIM quality metric
-
-        Technical Details:
-            - Rounds numeric values for consistent formatting
-            - Stores resolutions in "WxH" string format
-        """
-        self.videos.append({
+                        input_fps: float, model_fps: float,
+                        input_path: str, output_path: str) -> None:
+        """Add processing results for a single video and queue SSIM calculation."""
+        video_data = {
             "name": video_name,
             "inference_time": inference_time,
             "original_resolution": f"{input_frame[0]}x{input_frame[1]}",
             "upscaled_resolution": f"{output_frame[0]}x{output_frame[1]}",
-            "ssim": round(ssim, 3)
-        })
+            "input_fps": input_fps,
+            "model_fps": model_fps
+        }
+        self.videos.append(video_data)
+        self.pending_ssim_calculations.append((input_path, output_path, len(self.videos) - 1))
+
+    def calculate_all_ssim(self, scale: int) -> None:
+        """Calculate SSIM for all processed videos."""
+        logger.info("Starting SSIM calculations for all processed videos...")
+        for input_path, output_path, index in self.pending_ssim_calculations:
+            try:
+                ssim = calculate_video_ssim(input_path, output_path, scale)
+                self.videos[index]["ssim"] = round(ssim, 3)
+                logger.info(f"SSIM calculated for {self.videos[index]['name']}: {ssim:.3f}")
+            except Exception as e:
+                logger.error(f"Failed to calculate SSIM for {self.videos[index]['name']}: {str(e)}")
+                self.videos[index]["ssim"] = None
 
     def get_summary(self) -> Dict[str, Any]:
-        """
-        Generates comprehensive batch processing summary.
-
-        Returns:
-            Dict[str, Any]: Summary dictionary containing:
-                - model_name (str): Name of model used
-                - total_videos (int): Number of videos processed
-                - total_batch_time (float): Total processing time
-                - average_time_per_video (float): Average processing time
-                - videos (list): Detailed metrics for each video
-                - timestamp (str): ISO format timestamp
-
-        Technical Details:
-            - Calculates aggregate statistics
-            - Formats timestamp in ISO 8601 format
-            - Includes all individual video metrics
-        """
+        """Generate comprehensive batch processing summary."""
         total_time = time.time() - self.start_time
         return {
             "model_name": self.model_name,
@@ -442,6 +392,7 @@ if __name__ == "__main__":
     video_extensions = ('.mp4', '.avi', '.mkv', '.mov')
     batch_metrics = BatchMetrics(model_name)
     
+    # Process all videos first
     for filename in os.listdir(config.input_directory):
         if filename.lower().endswith(video_extensions):
             video_path = os.path.join(config.input_directory, filename)
@@ -467,18 +418,27 @@ if __name__ == "__main__":
                     inference_time=inference_time,
                     input_frame=(input_width, input_height),
                     output_frame=(output_width, output_height),
-                    ssim=video_metrics["ssim"]
+                    input_fps=video_metrics["input_fps"],
+                    model_fps=video_metrics["model_fps"],
+                    input_path=video_path,
+                    output_path=output_path
                 )
 
                 logger.info(
                     f"Processed {filename} -> {output_path}\n"
                     f"Resolution: {input_width}x{input_height} -> {output_width}x{output_height}\n"
-                    f"SSIM: {video_metrics['ssim']:.3f}"
+                    f"Input FPS: {video_metrics['input_fps']:.2f}, Model FPS: {video_metrics['model_fps']:.2f}"
                 )
             except Exception as e:
                 logger.error(f"Failed to process {filename}: {str(e)}")
                 continue
     
-    # Export the metrics summary
+    # Calculate SSIM for all videos after processing
+    logger.info("All videos processed. Starting SSIM calculations...")
+    scale = config.available_models[model_name]["scale"]
+    batch_metrics.calculate_all_ssim(scale)
+    
+    # Export the final metrics summary
     metrics_summary = batch_metrics.get_summary()
     export_metrics(metrics_summary, model_name)
+    logger.info("Processing completed. Metrics exported.")
