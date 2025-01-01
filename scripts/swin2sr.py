@@ -11,15 +11,6 @@ Key Features:
     - Comprehensive performance metrics and JSON reporting
     - GPU acceleration with CUDA support
     - Robust error handling and logging
-
-Dependencies:
-    - torch>=1.7.0
-    - transformers>=4.0.0
-    - PIL>=8.0.0
-    - numpy>=1.19.0
-    - tqdm>=4.45.0
-    - loguru>=0.5.0
-    - opencv-python>=4.5.0
 """
 
 import os
@@ -37,33 +28,12 @@ from tqdm import tqdm
 from loguru import logger
 from transformers import AutoImageProcessor, Swin2SRForImageSuperResolution
 
-class BatchMetrics:
-    def __init__(self, num_videos: int) -> None:
-        self.start_time: float = time.time()
-        self.num_videos: int = num_videos
-        self.videos_processed: List[Dict[str, Union[str, float]]] = []
-
-    def add_video_result(self, video_name: str, inference_time: float,
-                         original_resolution: tuple, upscaled_resolution: tuple,
-                         ssim: float) -> None:
-        self.videos_processed.append({
-            "name": video_name,
-            "inference_time": inference_time,
-            "original_resolution": f"{original_resolution[0]}x{original_resolution[1]}",
-            "upscaled_resolution": f"{upscaled_resolution[0]}x{upscaled_resolution[1]}",
-            "ssim": round(ssim, 3)
-        })
-
-    def get_summary(self) -> Dict[str, Any]:
-        total_time = time.time() - self.start_time
-        return {
-            "model_name": "Swin2SR",
-            "total_videos": self.num_videos,
-            "total_batch_time": total_time,
-            "average_time_per_video": total_time / self.num_videos,
-            "videos": self.videos_processed,
-            "timestamp": datetime.now().isoformat(),
-        }
+from data_models.metrics_model import (
+    BatchMetrics, 
+    VideoMetrics, 
+    create_batch_metrics,
+    create_video_metrics
+)
 
 class Swin2SRUpscaler:
     def __init__(self, input_dir: Path, output_dir: Path, gpu_device: int = 0) -> None:
@@ -124,7 +94,7 @@ class Swin2SRUpscaler:
         
         return output
 
-    def process_video(self, video_path: Path) -> tuple:
+    def process_video(self, video_path: Path) -> VideoMetrics:
         """Process a single video through the Swin2SR upscaling pipeline."""
         start_time = time.time()
 
@@ -150,6 +120,9 @@ class Swin2SRUpscaler:
 
         cap.set(cv2.CAP_PROP_POS_FRAMES, 0)
         ssim_values = []
+        frames_processed = 0
+        processing_start = time.time()
+
         with tqdm(total=total_frames, desc=f"Processing {video_path.name}") as pbar:
             while True:
                 ret, frame = cap.read()
@@ -165,49 +138,60 @@ class Swin2SRUpscaler:
                 ssim_values.append(ssim)
 
                 writer.write(upscaled_frame)
+                frames_processed += 1
                 pbar.update(1)
 
         cap.release()
         writer.release()
 
-        inference_time = time.time() - start_time
+        processing_time = time.time() - processing_start
+        model_fps = frames_processed / processing_time
         average_ssim = sum(ssim_values) / len(ssim_values) if ssim_values else 0.0
 
-        return (
-            inference_time,
-            (orig_width, orig_height),
-            (up_width, up_height),
-            average_ssim
+        return create_video_metrics(
+            name=video_path.name,
+            inference_time=processing_time,
+            original_resolution=(orig_width, orig_height),
+            upscaled_resolution=(up_width, up_height),
+            input_fps=fps,
+            model_fps=model_fps,
+            ssim=average_ssim
         )
 
-    def process_batch(self) -> Dict[str, Any]:
+    def process_batch(self) -> BatchMetrics:
         """Execute batch processing of multiple videos with comprehensive metrics."""
         video_files = list(self.input_dir.glob("*.mp4"))
         if not video_files:
             raise ValueError(f"No MP4 files found in {self.input_dir}")
 
-        metrics = BatchMetrics(len(video_files))
+        metrics = create_batch_metrics("Swin2SR")
+        start_time = time.time()
         logger.info(f"Processing {len(video_files)} videos with Swin2SR...")
 
         with tqdm(video_files, desc="Processing batch", ascii=" ▖▘▝▗▚▞█ ") as pbar:
             for video_path in pbar:
                 try:
-                    inference_time, orig_res, up_res, ssim = self.process_video(video_path)
-                    metrics.add_video_result(video_path.name, inference_time,
-                                             orig_res, up_res, ssim)
-                    pbar.set_postfix({"Last inference": f"{inference_time:.2f}s"})
+                    video_metrics = self.process_video(video_path)
+                    metrics.videos.append(video_metrics)
+                    pbar.set_postfix({"Last inference": f"{video_metrics.inference_time:.2f}s"})
                 except Exception as e:
                     logger.error(f"Failed to process {video_path.name}: {str(e)}")
 
+        # Update batch metrics
+        metrics.total_videos = len(metrics.videos)
+        metrics.total_batch_time = time.time() - start_time
+        metrics.average_time_per_video = metrics.total_batch_time / metrics.total_videos
+
+        # Save metrics to file
         metrics_dir = self.output_dir / "metrics"
         metrics_dir.mkdir(exist_ok=True)
         metrics_path = metrics_dir / f"swin2sr_batch_metrics_{datetime.now():%Y%m%d_%H%M%S}.json"
 
-        summary = metrics.get_summary()
         with open(metrics_path, "w") as f:
-            json.dump(summary, f, indent=4)
+            json.dump(metrics.dict(), f, indent=4)
 
-        return summary
+        return metrics
+
 
 def main() -> None:
     """Main entry point for the Swin2SR video processing system."""
@@ -215,15 +199,23 @@ def main() -> None:
         input_dir = Path("/root/pixelupbench/data/realism")
         output_dir = Path("../results")
         upscaler = Swin2SRUpscaler(input_dir, output_dir)
-        summary = upscaler.process_batch()
+        metrics = upscaler.process_batch()
+        
         print("\nSwin2SR Batch Processing Summary:")
-        print(f"Total videos processed: {summary['total_videos']}")
-        print(f"Total batch time: {summary['total_batch_time']:.2f}s")
-        print(f"Average time per video: {summary['average_time_per_video']:.2f}s")
+        print(f"Total videos processed: {metrics.total_videos}")
+        print(f"Total batch time: {metrics.total_batch_time:.2f}s")
+        print(f"Average time per video: {metrics.average_time_per_video:.2f}s")
+        print("\nIndividual video results:")
+        for video in metrics.videos:
+            print(f"{video.name}:")
+            print(f"  Time: {video.inference_time:.2f}s")
+            print(f"  Model FPS: {video.model_fps:.2f}")
+            print(f"  SSIM: {video.ssim:.3f}")
 
     except Exception as e:
         logger.error(f"Batch processing failed: {str(e)}")
         raise
+
 
 if __name__ == "__main__":
     main()

@@ -48,7 +48,6 @@ from loguru import logger
 from image_gen_aux import UpscaleWithModel
 import numpy as np
 from PIL import Image
-
 from configs.openmodeldb_settings import ModelConfig, UpscalerSettings
 
 
